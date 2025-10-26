@@ -7,9 +7,9 @@ class Conexion
     private function __construct()
     {
         $host = "localhost";
-        $db = "veterinaria";
-        $user = "root";
-        $pass = "Itca123!";
+        $db = "";
+        $user = "";
+        $pass = "";
 
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
