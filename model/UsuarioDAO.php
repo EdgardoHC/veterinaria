@@ -85,7 +85,11 @@ class UsuarioDAO
 
     public function buscarPorEmailOApodo($usuario)
     {
-        $sql = "SELECT * FROM usuarios WHERE email = ? OR apodo = ? LIMIT 1";
+        $sql = "SELECT u.*, r.nombre AS nombre_rol 
+                FROM usuarios u 
+                LEFT JOIN rol r ON u.idrol = r.idrol 
+                WHERE u.correoelectronico = ? OR u.nombreusuario = ? 
+                LIMIT 1";
 
         try {
             $stmt = $this->conn->prepare($sql);

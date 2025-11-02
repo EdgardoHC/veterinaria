@@ -10,14 +10,15 @@ if (isset($_POST['accion']) && $_POST['accion'] === "login") {
 
     $row = $dao->buscarPorEmailOApodo($usuario);
 
-    if ($row && password_verify($pwd, $row['pwd'])) {
+    //if ($row && password_verify($pwd, $row['pwd'])) {
+    if ($row && $pwd === $row['contrasena']) {
         // Guardamos datos en la sesión
         $_SESSION['usuario'] = [
-            "id" => $row['idUsuario'],
-            "nombre" => $row['nombre'],
-            "apellidos" => $row['apellidos'],
-            "email" => $row['email'],
-            "apodo" => $row['apodo']
+            "id" => $row['idusuario'],
+            "nombre" => $row['nombrecompleto'],
+            "usuario" => $row['nombreusuario'],
+            "email" => $row['correoelectronico'],
+            "rol_nombre" => $row['nombre_rol']
         ];
 
         echo json_encode(["ok" => true]);
