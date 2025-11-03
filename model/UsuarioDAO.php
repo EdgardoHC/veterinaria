@@ -14,7 +14,7 @@ class UsuarioDAO
     public function listar()
     {
         try {
-            $sql = "SELECT idUsuario, nombre, apellidos, email, apodo FROM usuarios";
+            $sql = "SELECT idusuario, nombrecompleto, nombreusuario, correoelectronico, idrol, estado FROM usuarios";
             $result = $this->conn->query($sql);
             return $result->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
@@ -33,9 +33,9 @@ class UsuarioDAO
             $stmt->bind_param(
                 "sssss",
                 $u->getNombre(),
-                $u->getApellidos(),
+                //$u->getApellidos(),
                 $u->getEmail(),
-                $u->getApodo(),
+                //$u->getApodo(),
                 $hashed
             );
             $stmt->execute();
@@ -48,16 +48,17 @@ class UsuarioDAO
 
     public function actualizar(Usuario $u)
     {
-        $sql = "UPDATE usuarios SET nombre = ?, apellidos = ?, email = ?, apodo = ? WHERE idUsuario = ?";
+        $sql = "UPDATE usuarios SET nombrecompleto = ?, nombreusuario = ?, correoelectronico = ?, idrol = ?, estado=? WHERE idusuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param(
-                "ssssi",
+                "sssiii",
                 $u->getNombre(),
-                $u->getApellidos(),
+                $u->getNombreUsuario(),
                 $u->getEmail(),
-                $u->getApodo(),
+                $u->getIdRol(),
+                $u->getEstado(),
                 $u->getIdUsuario()
             );
             $stmt->execute();
@@ -70,7 +71,7 @@ class UsuarioDAO
 
     public function eliminar($id)
     {
-        $sql = "DELETE FROM usuarios WHERE idUsuario = ?";
+        $sql = "DELETE FROM usuarios WHERE idusuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);

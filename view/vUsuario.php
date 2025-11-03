@@ -25,14 +25,17 @@
         <table class="table table-hover table-striped" id="tablaUsuarios">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Apellidos</th>
+                    <th>Nombre Completo</th>
+                    <th>Username</th>
                     <th>Email</th>
-                    <th>Apodo</th>
+                    <th>Rol</th>
+                    <th>Activo / Inactivo</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+
+            </tbody>
         </table>
 
     </div>
@@ -52,12 +55,12 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <input type="hidden" id="idUsuario" name="idUsuario">
-                                <label for="nombre">Nombre</label>
+                                <label for="nombre">Nombre Completo</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre" required maxlength="100">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="apellidos">Apellidos</label>
-                                <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
                             </div>
 
                             <div class="form-group col-md-6">
@@ -65,12 +68,26 @@
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="apodo">Apodo</label>
-                                <input type="text" class="form-control" id="apodo" name="apodo" required>
+                                <label for="correo">Rol del usuario</label>
+                               <select class="form-control" id="rol" name="rol" required>
+                                    <option selected>Selecciona un rol</option>
+                                    <option value="1">Administrador</option>
+                                    <option value="2">Veterinario</option>
+                                    <option value="3">Recepcionista</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="permisos">Permisos: </label>
+                                <select class="form-control" id="permisos" name="permisos" required>
+                                    <option selected>Selecciona un rol</option>
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                    
+                                </select>
                             </div>
                             <div class="form-group col-md-6" id="grupoPwd">
                                 <label for="pwd">Contrasena</label>
-                                <input type="password" class="form-control" id="pwd" name="pwd" required>
+                                <input type="password" class="form-control" id="pwd" name="pwd">
                             </div>
                         </div>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>

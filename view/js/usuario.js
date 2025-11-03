@@ -38,6 +38,7 @@ $(function () {
 
     $("#tablaUsuarios tbody").on("click", ".btn-eliminar", function () {
         const id = $(this).data("id");
+        console.log("ID a eliminar:", id);
         solicitarEliminacion(id);
     });
 });
@@ -60,17 +61,18 @@ function cargarUsuarios() {
 
         if (usuarios.length === 0) {
             const $fila = $("<tr>");
-            $fila.append($("<td>").attr("colspan", 5).addClass("text-center").text("No hay usuarios registrados"));
+            $fila.append($("<td>").attr("colspan", 6).addClass("text-center").text("No hay usuarios registrados"));
             $tbody.append($fila);
             return;
         }
 
         usuarios.forEach(function (u) {
             const $fila = $("<tr>");
-            $fila.append($("<td>").text(u.nombre));
-            $fila.append($("<td>").text(u.apellidos));
-            $fila.append($("<td>").text(u.email));
-            $fila.append($("<td>").text(u.apodo));
+            $fila.append($("<td>").text(u.nombrecompleto));
+            $fila.append($("<td>").text(u.nombreusuario));
+            $fila.append($("<td>").text(u.correoelectronico));
+            $fila.append($("<td>").text(u.idrol == 1 ? "Administrador" : u.idrol == 2 ? "Veterinario" : "Recepcionista"));
+            $fila.append($("<td>").text(u.estado == 1 ? "Activo" : "Inactivo"));
 
             const $acciones = $("<td>");
             const $btnEditar = $("<button>")
@@ -81,12 +83,13 @@ function cargarUsuarios() {
             const $btnEliminar = $("<button>")
                 .addClass("btn btn-sm btn-danger btn-eliminar")
                 .text("Eliminar")
-                .data("id", u.idUsuario);
+                .data("id", u.idusuario);
 
             $acciones.append($btnEditar, $btnEliminar);
             $fila.append($acciones);
             $tbody.append($fila);
         });
+
     }).fail(function (xhr) {
         const mensaje = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "Error de comunicacion con el servidor";
         alert(mensaje);
@@ -104,17 +107,18 @@ function prepararEdicion(usuario) {
         return;
     }
 
-    $("#idUsuario").val(usuario.idUsuario);
-    $("#nombre").val(usuario.nombre);
-    $("#apellidos").val(usuario.apellidos);
-    $("#email").val(usuario.email);
-    $("#apodo").val(usuario.apodo);
+    $("#idUsuario").val(usuario.idusuario);
+    $("#nombre").val(usuario.nombrecompleto);
+    $("#username").val(usuario.nombreusuario);
+    $("#email").val(usuario.correoelectronico);
+    $("#rol").val(usuario.idrol);
+    $("#permisos").val(usuario.estado);
     $("#pwd").val("");
 
     $("#exampleModalLabel").text("Editar usuario");
     $("#btnGuardar").text("Actualizar");
-    $("#grupoPwd").hide();
-    $("#pwd").removeAttr("required");
+  //  $("#grupoPwd").hide();
+   // $("#pwd").removeAttr("required");
 
     $("#modalNuevoUsuario").modal("show");
 }
@@ -153,7 +157,7 @@ function resetFormulario() {
     $("#exampleModalLabel").text("Nuevo usuario");
     $("#btnGuardar").text("Guardar");
     $("#grupoPwd").show();
-    $("#pwd").attr("required", true);
+   // $("#pwd").attr("required", true);
 }
 
 function toggleFormulario(bloquear) {

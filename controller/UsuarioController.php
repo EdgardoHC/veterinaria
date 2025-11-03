@@ -47,9 +47,9 @@ try {
 
             $usuario = new Usuario();
             $usuario->setNombre($nombre);
-            $usuario->setApellidos($apellidos);
+            //$usuario->setApellidos($apellidos);
             $usuario->setEmail($email);
-            $usuario->setApodo($apodo);
+           // $usuario->setApodo($apodo);
             $usuario->setPwd($pwd);
 
             $resultado = $dao->crear($usuario);
@@ -64,11 +64,12 @@ try {
         case "actualizar":
             $id = filter_var($_POST["idUsuario"] ?? null, FILTER_VALIDATE_INT);
             $nombre = trim($_POST["nombre"] ?? "");
-            $apellidos = trim($_POST["apellidos"] ?? "");
+            $username = trim($_POST["username"] ?? "");
             $email = strtolower(trim($_POST["email"] ?? ""));
-            $apodo = trim($_POST["apodo"] ?? "");
+            $rol = trim($_POST["rol"] ?? "");
+            $permisos = trim($_POST["permisos"] ?? "");
 
-            if (!$id || $nombre === "" || $apellidos === "" || $email === "" || $apodo === "") {
+            if (!$id || $nombre === "" || $username === "" || $email === "" || $rol === "" || $permisos === "") {
                 http_response_code(400);
                 echo json_encode(["ok" => false, "message" => "Datos invalidos" ]);
                 break;
@@ -83,9 +84,10 @@ try {
             $usuario = new Usuario();
             $usuario->setIdUsuario($id);
             $usuario->setNombre($nombre);
-            $usuario->setApellidos($apellidos);
+            $usuario->setNombreUsuario($username);
             $usuario->setEmail($email);
-            $usuario->setApodo($apodo);
+            $usuario->setIdRol($rol);
+            $usuario->setEstado($permisos);
 
             $resultado = $dao->actualizar($usuario);
             if ($resultado) {

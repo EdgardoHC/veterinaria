@@ -2,11 +2,12 @@
 class Usuario
 {
     private $idUsuario;
-    private $nombre;
-    private $apellidos;
+    private $nombrecompleto;
+    private $nombreusuario;
     private $email;
-    private $apodo;
+    private $idrol;
     private $pwd;
+    private $estado;
 
     // Getters y Setters
     public function getIdUsuario()
@@ -20,20 +21,20 @@ class Usuario
 
     public function getNombre()
     {
-        return $this->nombre;
+        return $this->nombrecompleto;
     }
     public function setNombre($nombre)
     {
-        $this->nombre = $nombre;
+        $this->nombrecompleto = $nombre;
     }
 
-    public function getApellidos()
+    public function getNombreUsuario()
     {
-        return $this->apellidos;
+        return $this->nombreusuario;
     }
-    public function setApellidos($apellidos)
+    public function setNombreUsuario($username)
     {
-        $this->apellidos = $apellidos;
+        $this->nombreusuario = $username;
     }
 
     public function getEmail()
@@ -45,13 +46,22 @@ class Usuario
         $this->email = $email;
     }
 
-    public function getApodo()
+    public function getIdRol()
     {
-        return $this->apodo;
+        return $this->idrol;
     }
-    public function setApodo($apodo)
+    public function setIdRol($rol)
     {
-        $this->apodo = $apodo;
+        $this->idrol = $rol;
+    }
+
+    public function getEstado()
+    {
+        return $this->estado;
+    }
+    public function setEstado($est)
+    {
+        $this->estado = $est;
     }
 
     public function getPwd()
