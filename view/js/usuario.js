@@ -112,6 +112,7 @@ function prepararEdicion(usuario) {
     $("#username").val(usuario.nombreusuario);
     $("#email").val(usuario.correoelectronico);
     $("#rol").val(usuario.idrol);
+    $("#estado").val(usuario.estado);
     $("#pwd").val("");
 
     $("#exampleModalLabel").text("Editar usuario");

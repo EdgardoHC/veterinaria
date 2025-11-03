@@ -48,16 +48,17 @@ class UsuarioDAO
 
     public function actualizar(Usuario $u)
     {
-        $sql = "UPDATE usuarios SET nombrecompleto = ?, nombreusuario = ?, correoelectronico = ?, idrol = ? WHERE idusuario = ?";
+        $sql = "UPDATE usuarios SET nombrecompleto = ?, nombreusuario = ?, correoelectronico = ?, idrol = ?, estado=? WHERE idusuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param(
-                "sssii",
+                "sssiii",
                 $u->getNombre(),
                 $u->getNombreUsuario(),
                 $u->getEmail(),
                 $u->getIdRol(),
+                $u->getEstado(),
                 $u->getIdUsuario()
             );
             $stmt->execute();

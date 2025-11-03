@@ -62,7 +62,14 @@
                                 <label for="username">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
                             </div>
-
+                        <div class="form-group col-md-6">
+                                <label for="correo">Estado del usuario</label>
+                               <select class="form-control" id="estado" name="estado" required>
+                                    <option selected>Selecciona un rol</option>
+                                    <option value="1">Activo</option>
+                                    <option value="0">Inactivo</option>
+                                </select>
+                            </div>
                             <div class="form-group col-md-6">
                                 <label for="correo">Correo</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
