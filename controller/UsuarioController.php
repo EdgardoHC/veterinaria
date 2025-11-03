@@ -67,9 +67,8 @@ try {
             $username = trim($_POST["username"] ?? "");
             $email = strtolower(trim($_POST["email"] ?? ""));
             $rol = trim($_POST["rol"] ?? "");
-            $permisos = trim($_POST["permisos"] ?? "");
 
-            if (!$id || $nombre === "" || $username === "" || $email === "" || $rol === "" || $permisos === "") {
+            if (!$id || $nombre === "" || $username === "" || $email === "" || $rol === "") {
                 http_response_code(400);
                 echo json_encode(["ok" => false, "message" => "Datos invalidos" ]);
                 break;
@@ -87,7 +86,7 @@ try {
             $usuario->setNombreUsuario($username);
             $usuario->setEmail($email);
             $usuario->setIdRol($rol);
-            $usuario->setEstado($permisos);
+            
 
             $resultado = $dao->actualizar($usuario);
             if ($resultado) {

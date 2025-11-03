@@ -48,17 +48,16 @@ class UsuarioDAO
 
     public function actualizar(Usuario $u)
     {
-        $sql = "UPDATE usuarios SET nombrecompleto = ?, nombreusuario = ?, correoelectronico = ?, idrol = ?, estado=? WHERE idusuario = ?";
+        $sql = "UPDATE usuarios SET nombrecompleto = ?, nombreusuario = ?, correoelectronico = ?, idrol = ? WHERE idusuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param(
-                "sssiii",
+                "sssii",
                 $u->getNombre(),
                 $u->getNombreUsuario(),
                 $u->getEmail(),
                 $u->getIdRol(),
-                $u->getEstado(),
                 $u->getIdUsuario()
             );
             $stmt->execute();
@@ -71,15 +70,18 @@ class UsuarioDAO
 
     public function eliminar($id)
     {
-        $sql = "DELETE FROM usuarios WHERE idusuario = ?";
+        $sql = "UPDATE usuarios SET estado=0 WHERE idusuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("i", $id);
+            $stmt->bind_param(
+                "i",
+                $id
+            );
             $stmt->execute();
-            return $stmt->affected_rows > 0;
+            return $stmt->affected_rows >= 0;
         } catch (mysqli_sql_exception $e) {
-            error_log("Error al eliminar usuario: " . $e->getMessage());
+            error_log("Error al actualizar estado: " . $e->getMessage());
             return false;
         }
     }

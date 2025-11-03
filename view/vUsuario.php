@@ -76,15 +76,7 @@
                                     <option value="3">Recepcionista</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="permisos">Permisos: </label>
-                                <select class="form-control" id="permisos" name="permisos" required>
-                                    <option selected>Selecciona un rol</option>
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                    
-                                </select>
-                            </div>
+                           
                             <div class="form-group col-md-6" id="grupoPwd">
                                 <label for="pwd">Contrasena</label>
                                 <input type="password" class="form-control" id="pwd" name="pwd">
