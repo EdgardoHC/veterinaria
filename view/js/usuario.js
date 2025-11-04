@@ -16,16 +16,41 @@ $(function () {
             dataType: "json"
         }).done(function (res) {
             if (res.ok) {
-                alert(res.message || "Operacion realizada");
+                Swal.fire({
+                    icon: "success",
+                    title: accion === "crear" ? "Usuario creado" : "Usuario actualizado",
+                    text: res.message || "",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
                 $("#modalNuevoUsuario").modal("hide");
                 resetFormulario();
                 cargarUsuarios();
             } else {
-                alert(res.message || "No se pudo completar la operacion");
+                Swal.fire({
+                    icon: "warning",
+                    title: "No se pudo completar la operación",
+                    text: res.message || "Revisa los datos e inténtalo de nuevo"
+                });
             }
         }).fail(function (xhr) {
-            const mensaje = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "Error de comunicacion con el servidor";
-            alert(mensaje);
+            // 👇 AQUÍ ES DONDE HEMOS CAMBIADO COSAS
+            let mensaje = "Error de comunicación con el servidor";
+
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                mensaje = xhr.responseJSON.message;
+            } else if (xhr.responseText) {
+                // si PHP devuelve texto plano (notice, warning, fatal, etc.)
+                mensaje = xhr.responseText;
+            }
+
+            console.error("Error AJAX guardar usuario:", xhr); // para ver detalles en la consola
+
+            Swal.fire({
+                icon: "error",
+                title: "Ups...",
+                text: mensaje
+            });
         }).always(function () {
             toggleFormulario(false);
         });
@@ -38,7 +63,6 @@ $(function () {
 
     $("#tablaUsuarios tbody").on("click", ".btn-eliminar", function () {
         const id = $(this).data("id");
-        console.log("ID a eliminar:", id);
         solicitarEliminacion(id);
     });
 });
@@ -51,7 +75,11 @@ function cargarUsuarios() {
         dataType: "json"
     }).done(function (res) {
         if (!res.ok) {
-            alert(res.message || "No se pudo obtener la informacion de usuarios");
+            Swal.fire({
+                icon: "warning",
+                title: "No se pudo obtener la información",
+                text: res.message || "Intenta recargar la página"
+            });
             return;
         }
 
@@ -61,28 +89,45 @@ function cargarUsuarios() {
 
         if (usuarios.length === 0) {
             const $fila = $("<tr>");
-            $fila.append($("<td>").attr("colspan", 6).addClass("text-center").text("No hay usuarios registrados"));
+            $fila.append(
+                $("<td>")
+                    .attr("colspan", 6)
+                    .addClass("text-center")
+                    .text("No hay usuarios registrados")
+            );
             $tbody.append($fila);
             return;
         }
 
         usuarios.forEach(function (u) {
             const $fila = $("<tr>");
+
             $fila.append($("<td>").text(u.nombrecompleto));
             $fila.append($("<td>").text(u.nombreusuario));
             $fila.append($("<td>").text(u.correoelectronico));
-            $fila.append($("<td>").text(u.idrol == 1 ? "Administrador" : u.idrol == 2 ? "Veterinario" : "Recepcionista"));
-            $fila.append($("<td>").text(u.estado == 1 ? "Activo" : "Inactivo"));
+            $fila.append(
+                $("<td>").text(
+                    u.idrol == 1 ? "Administrador" :
+                    u.idrol == 2 ? "Veterinario" : "Recepcionista"
+                )
+            );
 
-            const $acciones = $("<td>");
+            // Estado con badge bonito
+            const $estado = $("<span>")
+                .addClass("badge-estado " + (u.estado == 1 ? "activo" : "inactivo"))
+                .text(u.estado == 1 ? "Activo" : "Inactivo");
+            $fila.append($("<td>").append($estado));
+
+            const $acciones = $("<td>").addClass("text-right");
+
             const $btnEditar = $("<button>")
-                .addClass("btn btn-sm btn-warning mr-1 btn-editar")
-                .text("Editar")
+                .addClass("btn btn-warning btn-accion mr-1 btn-editar")
+                .html('<i class="fas fa-edit"></i> Editar')
                 .data("usuario", u);
 
             const $btnEliminar = $("<button>")
-                .addClass("btn btn-sm btn-danger btn-eliminar")
-                .text("Eliminar")
+                .addClass("btn btn-danger btn-accion btn-eliminar")
+                .html('<i class="fas fa-trash-alt"></i> Eliminar')
                 .data("id", u.idusuario);
 
             $acciones.append($btnEditar, $btnEliminar);
@@ -91,19 +136,32 @@ function cargarUsuarios() {
         });
 
     }).fail(function (xhr) {
-        const mensaje = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "Error de comunicacion con el servidor";
-        alert(mensaje);
+        const mensaje = (xhr.responseJSON && xhr.responseJSON.message)
+            ? xhr.responseJSON.message
+            : "Error de comunicación con el servidor";
+        Swal.fire({
+            icon: "error",
+            title: "Ups...",
+            text: mensaje
+        });
     });
 }
 
 function nuevoUsuario() {
     resetFormulario();
+    $("#exampleModalLabel").text("Nuevo usuario");
+    $("#btnGuardar").text("Guardar");
+    $("#grupoPwd").show();
     $("#modalNuevoUsuario").modal("show");
 }
 
 function prepararEdicion(usuario) {
     if (!usuario) {
-        alert("No se pudo obtener la informacion del usuario");
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No se pudo obtener la información del usuario"
+        });
         return;
     }
 
@@ -117,37 +175,64 @@ function prepararEdicion(usuario) {
 
     $("#exampleModalLabel").text("Editar usuario");
     $("#btnGuardar").text("Actualizar");
-  //  $("#grupoPwd").hide();
-   // $("#pwd").removeAttr("required");
 
     $("#modalNuevoUsuario").modal("show");
 }
 
 function solicitarEliminacion(id) {
     if (!id) {
-        alert("Identificador de usuario invalido");
+        Swal.fire({
+            icon: "warning",
+            title: "Identificador inválido",
+            text: "No se pudo determinar qué usuario eliminar"
+        });
         return;
     }
 
-    if (!confirm("Seguro que desea eliminar el usuario?")) {
-        return;
-    }
+    Swal.fire({
+        title: "¿Eliminar usuario?",
+        text: "Este cambio desactivará al usuario en el sistema.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (!result.isConfirmed) return;
 
-    $.ajax({
-        url: "controller/UsuarioController.php",
-        method: "POST",
-        data: { accion: "eliminar", idUsuario: id },
-        dataType: "json"
-    }).done(function (res) {
-        if (res.ok) {
-            alert(res.message || "Usuario eliminado");
-            cargarUsuarios();
-        } else {
-            alert(res.message || "No se pudo eliminar el usuario");
-        }
-    }).fail(function (xhr) {
-        const mensaje = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : "Error de comunicacion con el servidor";
-        alert(mensaje);
+        $.ajax({
+            url: "controller/UsuarioController.php",
+            method: "POST",
+            data: { accion: "eliminar", idUsuario: id },
+            dataType: "json"
+        }).done(function (res) {
+            if (res.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Usuario eliminado",
+                    text: res.message || "",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                cargarUsuarios();
+            } else {
+                Swal.fire({
+                    icon: "warning",
+                    title: "No se pudo eliminar",
+                    text: res.message || "Intenta de nuevo más tarde"
+                });
+            }
+        }).fail(function (xhr) {
+            const mensaje = (xhr.responseJSON && xhr.responseJSON.message)
+                ? xhr.responseJSON.message
+                : "Error de comunicación con el servidor";
+            Swal.fire({
+                icon: "error",
+                title: "Ups...",
+                text:mensaje
+            });
+        });
     });
 }
 
@@ -157,12 +242,16 @@ function resetFormulario() {
     $("#exampleModalLabel").text("Nuevo usuario");
     $("#btnGuardar").text("Guardar");
     $("#grupoPwd").show();
-   // $("#pwd").attr("required", true);
 }
 
 function toggleFormulario(bloquear) {
-    $("#frmUsuario").find("input, select, textarea, button[type=submit]").prop("disabled", bloquear);
+    $("#frmUsuario")
+        .find("input, select, textarea, button[type=submit]")
+        .prop("disabled", bloquear);
+
     $("#btnGuardar").text(
-        bloquear ? "Procesando..." : ($("#idUsuario").val() === "" ? "Guardar" : "Actualizar")
+        bloquear
+            ? "Procesando..."
+            : ($("#idUsuario").val() === "" ? "Guardar" : "Actualizar")
     );
 }

@@ -27,15 +27,17 @@ try {
             break;
 
         case "crear":
-            $nombre = trim($_POST["nombre"] ?? "");
-            $apellidos = trim($_POST["apellidos"] ?? "");
-            $email = strtolower(trim($_POST["email"] ?? ""));
-            $apodo = trim($_POST["apodo"] ?? "");
-            $pwd = $_POST["pwd"] ?? "";
+            $nombre    = trim($_POST["nombre"] ?? "");
+            $apellidos = ""; // opcional
+            $email     = strtolower(trim($_POST["email"] ?? ""));
+            $username  = trim($_POST["username"] ?? "");
+            $pwd       = $_POST["pwd"] ?? "";
+            $rol       = trim($_POST["rol"] ?? "");
+            $estado    = trim($_POST["estado"] ?? "");
 
-            if ($nombre === "" || $apellidos === "" || $email === "" || $apodo === "" || $pwd === "") {
+            if ($nombre === "" || $email === "" || $username === "" || $pwd === "" || $rol === "" || $estado === "") {
                 http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Todos los campos son obligatorios"]);
+                echo json_encode(["ok" => false, "message" => "Todos los campos son obligatorios (excepto apellidos)"]);
                 break;
             }
 
@@ -47,10 +49,12 @@ try {
 
             $usuario = new Usuario();
             $usuario->setNombre($nombre);
-            //$usuario->setApellidos($apellidos);
+            $usuario->setApellidos($apellidos);
             $usuario->setEmail($email);
-           // $usuario->setApodo($apodo);
+            $usuario->setNombreUsuario($username);
             $usuario->setPwd($pwd);
+            $usuario->setIdRol((int)$rol);
+            $usuario->setEstado((int)$estado);
 
             $resultado = $dao->crear($usuario);
             if ($resultado) {
@@ -62,16 +66,16 @@ try {
             break;
 
         case "actualizar":
-            $id = filter_var($_POST["idUsuario"] ?? null, FILTER_VALIDATE_INT);
-            $nombre = trim($_POST["nombre"] ?? "");
+            $id       = filter_var($_POST["idUsuario"] ?? null, FILTER_VALIDATE_INT);
+            $nombre   = trim($_POST["nombre"] ?? "");
             $username = trim($_POST["username"] ?? "");
-            $email = strtolower(trim($_POST["email"] ?? ""));
-            $rol = trim($_POST["rol"] ?? "");
-            $estado = trim($_POST["estado"] ?? "");
+            $email    = strtolower(trim($_POST["email"] ?? ""));
+            $rol      = trim($_POST["rol"] ?? "");
+            $estado   = trim($_POST["estado"] ?? "");
 
             if (!$id || $nombre === "" || $username === "" || $email === "" || $rol === "" || $estado === "") {
                 http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Datos invalidos" ]);
+                echo json_encode(["ok" => false, "message" => "Datos invalidos"]);
                 break;
             }
 
@@ -84,11 +88,12 @@ try {
             $usuario = new Usuario();
             $usuario->setIdUsuario($id);
             $usuario->setNombre($nombre);
-            $usuario->setNombreUsuario($username);
+            // apellidos por ahora no lo tocamos
+            $usuario->setApellidos("");              
+            $usuario->setNombreUsuario($username);  // apodo
             $usuario->setEmail($email);
-            $usuario->setEstado($estado);
-            $usuario->setIdRol($rol);
-            
+            $usuario->setEstado((int)$estado);
+            $usuario->setIdRol((int)$rol);
 
             $resultado = $dao->actualizar($usuario);
             if ($resultado) {
@@ -122,7 +127,8 @@ try {
             break;
     }
 } catch (Throwable $e) {
+    // AHORA devolvemos el mensaje real para que lo veas en el SweetAlert
     error_log("Error en UsuarioController: " . $e->getMessage());
     http_response_code(500);
-    echo json_encode(["ok" => false, "message" => "Error interno del servidor"]);
+    echo json_encode(["ok" => false, "message" => $e->getMessage()]);
 }

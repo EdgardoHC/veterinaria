@@ -11,11 +11,22 @@ class UsuarioDAO
         $this->conn = Conexion::getInstance()->getConexion();
     }
 
+    // LISTAR
     public function listar()
     {
         try {
-            $sql = "SELECT idusuario, nombrecompleto, nombreusuario, correoelectronico, idrol, estado FROM usuarios";
+            $sql = "SELECT 
+                        u.idUsuario AS idusuario,
+                        CONCAT(u.nombre, ' ', u.apellidos) AS nombrecompleto,
+                        u.apodo AS nombreusuario,
+                        u.email AS correoelectronico,
+                        u.idrol,
+                        u.estado
+                    FROM usuarios u";
             $result = $this->conn->query($sql);
+            if (!$result) {
+                return [];
+            }
             return $result->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
             error_log("Error al listar usuarios: " . $e->getMessage());
@@ -23,76 +34,107 @@ class UsuarioDAO
         }
     }
 
+    // CREAR
     public function crear(Usuario $u)
     {
-        $sql = "INSERT INTO usuarios (nombre, apellidos, email, apodo, pwd) VALUES (?, ?, ?, ?, ?)";
+        // nombre, apellidos, email, apodo, pwd, idrol, estado
+        $sql = "INSERT INTO usuarios 
+                    (nombre, apellidos, email, apodo, pwd, idrol, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try {
-            $stmt = $this->conn->prepare($sql);
+            $stmt   = $this->conn->prepare($sql);
             $hashed = password_hash($u->getPwd(), PASSWORD_DEFAULT);
+
+            $nombre    = $u->getNombre();
+            $apellidos = $u->getApellidos();
+            $email     = $u->getEmail();
+            $apodo     = $u->getNombreUsuario();
+            $idRol     = $u->getIdRol();
+            $estado    = $u->getEstado();
             $stmt->bind_param(
-                "sssss",
-                $u->getNombre(),
-                //$u->getApellidos(),
-                $u->getEmail(),
-                //$u->getApodo(),
-                $hashed
+                "sssssii",
+                $nombre,
+                $apellidos,
+                $email,
+                $apodo,
+                $hashed,
+                $idRol,
+                $estado
             );
+
             $stmt->execute();
             return $stmt->affected_rows > 0;
         } catch (mysqli_sql_exception $e) {
             error_log("Error al crear usuario: " . $e->getMessage());
-            return false;
+            throw $e; // que lo capture el controller
         }
     }
 
-    public function actualizar(Usuario $u)
-    {
-        $sql = "UPDATE usuarios SET nombrecompleto = ?, nombreusuario = ?, correoelectronico = ?, idrol = ?, estado=? WHERE idusuario = ?";
+    // ACTUALIZAR (simplificado: no tocamos apellidos)
+  public function actualizar(Usuario $u)
+{
+    $sql = "UPDATE usuarios 
+            SET nombre = ?, 
+                apodo  = ?, 
+                email  = ?, 
+                idrol  = ?, 
+                estado = ?
+            WHERE idUsuario = ?";
 
-        try {
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param(
-                "sssiii",
-                $u->getNombre(),
-                $u->getNombreUsuario(),
-                $u->getEmail(),
-                $u->getIdRol(),
-                $u->getEstado(),
-                $u->getIdUsuario()
-            );
-            $stmt->execute();
-            return $stmt->affected_rows >= 0;
-        } catch (mysqli_sql_exception $e) {
-            error_log("Error al actualizar usuario: " . $e->getMessage());
-            return false;
-        }
+    try {
+        $stmt = $this->conn->prepare($sql);
+
+        //bind_param necesita variables (paso por referencia)
+        $nombre    = $u->getNombre();
+        $apodo     = $u->getNombreUsuario();
+        $email     = $u->getEmail();
+        $idRol     = $u->getIdRol();
+        $estado    = $u->getEstado();
+        $idUsuario = $u->getIdUsuario();
+
+        $stmt->bind_param(
+            "sssiii",
+            $nombre,
+            $apodo,
+            $email,
+            $idRol,
+            $estado,
+            $idUsuario
+        );
+
+        $stmt->execute();
+        return $stmt->affected_rows >= 0;
+    } catch (mysqli_sql_exception $e) {
+        error_log("Error al actualizar usuario: " . $e->getMessage());
+        throw $e;
     }
+}
 
+
+    // ELIMINADO lógico
     public function eliminar($id)
     {
-        $sql = "UPDATE usuarios SET estado=0 WHERE idusuario = ?";
+        $sql = "UPDATE usuarios SET estado = 0 WHERE idUsuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param(
-                "i",
-                $id
-            );
+            $stmt->bind_param("i", $id);
             $stmt->execute();
             return $stmt->affected_rows >= 0;
         } catch (mysqli_sql_exception $e) {
             error_log("Error al actualizar estado: " . $e->getMessage());
-            return false;
+            throw $e;
         }
     }
 
+    // LOGIN: buscar por email o apodo
     public function buscarPorEmailOApodo($usuario)
     {
         $sql = "SELECT u.*, r.nombre AS nombre_rol 
                 FROM usuarios u 
                 LEFT JOIN rol r ON u.idrol = r.idrol 
-                WHERE u.correoelectronico = ? OR u.nombreusuario = ? 
+                WHERE u.email = ? OR u.apodo = ? 
                 LIMIT 1";
 
         try {
