@@ -16,10 +16,10 @@ class UsuarioDAO
     {
         try {
             $sql = "SELECT 
-                        u.idUsuario AS idusuario,
-                        CONCAT(u.nombre, ' ', u.apellidos) AS nombrecompleto,
-                        u.apodo AS nombreusuario,
-                        u.email AS correoelectronico,
+                        u.idusuario,
+                        u.nombrecompleto,
+                        u.nombreusuario ,
+                        u.correoelectronico,
                         u.idrol,
                         u.estado
                     FROM usuarios u";
@@ -39,8 +39,8 @@ class UsuarioDAO
     {
         // nombre, apellidos, email, apodo, pwd, idrol, estado
         $sql = "INSERT INTO usuarios 
-                    (nombre, apellidos, email, apodo, pwd, idrol, estado) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    (nombrecompleto, nombreusuario, correoelectronico, contrasena, idrol, estado) 
+                VALUES (?, ?, ?, ?, ?, ?)";
 
         try {
             $stmt   = $this->conn->prepare($sql);
@@ -49,15 +49,13 @@ class UsuarioDAO
             $nombre    = $u->getNombre();
             $apellidos = $u->getApellidos();
             $email     = $u->getEmail();
-            $apodo     = $u->getNombreUsuario();
             $idRol     = $u->getIdRol();
             $estado    = $u->getEstado();
             $stmt->bind_param(
-                "sssssii",
+                "ssssii",
                 $nombre,
                 $apellidos,
                 $email,
-                $apodo,
                 $hashed,
                 $idRol,
                 $estado
@@ -75,12 +73,12 @@ class UsuarioDAO
   public function actualizar(Usuario $u)
 {
     $sql = "UPDATE usuarios 
-            SET nombre = ?, 
-                apodo  = ?, 
-                email  = ?, 
+            SET nombrecompleto = ?, 
+                nombreusuario  = ?, 
+                correoelectronico  = ?, 
                 idrol  = ?, 
                 estado = ?
-            WHERE idUsuario = ?";
+            WHERE idusuario = ?";
 
     try {
         $stmt = $this->conn->prepare($sql);
@@ -115,7 +113,7 @@ class UsuarioDAO
     // ELIMINADO lógico
     public function eliminar($id)
     {
-        $sql = "UPDATE usuarios SET estado = 0 WHERE idUsuario = ?";
+        $sql = "UPDATE usuarios SET estado = 0 WHERE idusuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);
@@ -134,7 +132,7 @@ class UsuarioDAO
         $sql = "SELECT u.*, r.nombre AS nombre_rol 
                 FROM usuarios u 
                 LEFT JOIN rol r ON u.idrol = r.idrol 
-                WHERE u.email = ? OR u.apodo = ? 
+                WHERE u.correoelectronico = ? OR u.nombreusuario = ? 
                 LIMIT 1";
 
         try {
