@@ -1,4 +1,8 @@
 <?php
+// Iniciar sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // Definimos las rutas en un array
 $routes = [
     "login"     => "view/login.php",

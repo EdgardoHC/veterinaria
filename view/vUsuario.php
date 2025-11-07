@@ -24,7 +24,7 @@
 </head>
 
 <body class="users-page">
-
+    <?php include 'view/componets/navbar.php'; ?>
     <div class="container my-4">
 
         <!-- Cabecera -->

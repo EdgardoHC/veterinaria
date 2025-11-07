@@ -40,29 +40,7 @@ $usuario = $_SESSION['usuario'];
 <body>
 
     <!-- ======== BARRA DE NAVEGACIÓN ======== -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-        <a class="navbar-brand" href="#">
-            <i class="fas fa-paw"></i>
-            Veterinaria
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="index.php?page=home">Inicio <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="index.php?page=usuarios">Gestión de Usuarios</a>
-                </li>
-            </ul>
-            <span class="navbar-text text-white mr-3">
-                ¡Hola, <?php echo htmlspecialchars($usuario['nombre']); ?>!
-            </span>
-            <a href="index.php?page=logout" class="btn btn-outline-light">Cerrar Sesión</a>
-        </div>
-    </nav>
+    <?php include 'view/componets/navbar.php'; ?>
 
     <!-- ======== CONTENIDO PRINCIPAL ======== -->
     <main class="container mt-5">
