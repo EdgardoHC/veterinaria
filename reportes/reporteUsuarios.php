@@ -65,9 +65,8 @@ ob_start();
         <thead>
             <tr>
                 <th style="width: 25%;">Nombre</th>
-                <th style="width: 25%;">Apellidos</th>
-                <th style="width: 30%;">Correo</th>
-                <th style="width: 20%;">Apodo</th>
+                <th style="width: 25%;">Correo</th>
+                <th style="width: 30%;">Usuario</th>
             </tr>
         </thead>
         <tbody>
@@ -78,10 +77,9 @@ ob_start();
             <?php else: ?>
                 <?php foreach ($usuarios as $u): ?>
                     <tr>
-                        <td><?= htmlspecialchars($u['nombre'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($u['apellidos'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($u['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($u['apodo'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($u['nombrecompleto'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($u['correoelectronico'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($u['nombreusuario'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

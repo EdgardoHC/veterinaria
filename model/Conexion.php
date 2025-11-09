@@ -8,8 +8,8 @@ class Conexion
     {
         $host = "localhost";
         $db = "veterinaria";
-        $user = "usuario";
-        $pass = "contraseña";
+        $user = "root";
+        $pass = "";
 
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
