@@ -33,9 +33,9 @@
                         Salud y Veterinaria
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="saludDropdown">
-                        <li><a class="dropdown-item" href="/Padecimientos">Padecimientos</a></li>
-                        <li><a class="dropdown-item" href="/Vacunas">Vacunas</a></li>
-                        <li><a class="dropdown-item" href="/TipoControlMedico">Tipo control médico</a></li>
+                        <li><a class="dropdown-item" href="/veterinaria/view/padecimientos.php">Padecimientos</a></li>
+                        <li><a class="dropdown-item" href="/veterinaria/view/vacunas.php">Vacunas</a></li>
+                        <li><a class="dropdown-item" href="/veterinaria/view/tipo_control_medico.php">Tipo control médico</a></li>
                     </ul>
                 </li>
                 
