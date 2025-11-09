@@ -31,7 +31,7 @@
 
             <div class="input-group-custom">
                 <i class="fas fa-user input-icon"></i>
-                <input type="text" class="form-control" name="usuario" placeholder="Email o Apodo" required autofocus>
+                <input type="text" class="form-control" name="usuario" placeholder="Ingrese Correo" required autofocus>
             </div>
 
             <div class="input-group-custom">

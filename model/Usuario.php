@@ -6,7 +6,7 @@ class Usuario
     private $nombre;
     private $apellidos;
     private $email;
-    private $nombreUsuario; // se mapeará a la columna "apodo"
+    private $nombreUsuario;
     private $pwd;
     private $estado;
     private $idRol;
