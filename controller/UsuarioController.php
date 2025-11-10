@@ -49,7 +49,7 @@ try {
 
             $usuario = new Usuario();
             $usuario->setNombre($nombre);
-            $usuario->setApellidos($apellidos);
+            //$usuario->setApellidos($apellidos);
             $usuario->setEmail($email);
             $usuario->setNombreUsuario($username);
             $usuario->setPwd($pwd);
@@ -89,7 +89,7 @@ try {
             $usuario->setIdUsuario($id);
             $usuario->setNombre($nombre);
             // apellidos por ahora no lo tocamos
-            $usuario->setApellidos("");              
+            //$usuario->setApellidos("");              
             $usuario->setNombreUsuario($username);  // apodo
             $usuario->setEmail($email);
             $usuario->setEstado((int)$estado);

@@ -121,12 +121,12 @@ function cargarUsuarios() {
             const $acciones = $("<td>").addClass("text-right");
 
             const $btnEditar = $("<button>")
-                .addClass("btn btn-warning btn-accion mr-1 btn-editar")
+                .addClass("btn btn-warning btn-accion mt-2 mr-1 btn-editar")
                 .html('<i class="fas fa-edit"></i> Editar')
                 .data("usuario", u);
 
             const $btnEliminar = $("<button>")
-                .addClass("btn btn-danger btn-accion btn-eliminar")
+                .addClass("btn btn-danger btn-accion mt-2 btn-eliminar")
                 .html('<i class="fas fa-trash-alt"></i> Eliminar')
                 .data("id", u.idusuario);
 

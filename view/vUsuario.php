@@ -33,10 +33,10 @@
                 <i class="fas fa-users-cog mr-2"></i> Gestión de usuarios
             </h3>
             <div class="page-actions">
-                <button class="btn btn-sm btn-primary mr-2" onclick="nuevoUsuario()">
+                <button class="btn btn-sm btn-primary mr-2 mt-2" onclick="nuevoUsuario()">
                     <i class="fas fa-user-plus"></i> Nuevo usuario
                 </button>
-                <a class="btn btn-sm btn-secondary" href="index.php?page=reporteUsuarios" target="_blank" rel="noopener">
+                <a class="btn btn-sm btn-secondary mt-2" href="index.php?page=reporteUsuarios" target="_blank" rel="noopener">
                     <i class="fas fa-file-pdf"></i> Informe PDF
                 </a>
             </div>

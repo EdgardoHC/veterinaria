@@ -32,7 +32,16 @@ if (array_key_exists($page, $routes)) {
         header("Location: index.php?page=login");
         exit;
     }
+     if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] !== "Administrador") {
+        // páginas restringidas solo para admin
+        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios"];
 
+        if (in_array($page, $soloAdmin)) {
+            // puedes redirigir al home o mostrar mensaje
+            header("Location: index.php?page=home");
+            exit;
+        }
+    }
     // Incluir la vista correspondiente
     require $routes[$page];
 

@@ -23,9 +23,11 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
             <li class="nav-item <?php echo ($page === 'home') ? 'active' : ''; ?>">
                 <a class="nav-link" href="index.php?page=home">Inicio</a>
             </li>
-            <li class="nav-item <?php echo ($page === 'usuarios') ? 'active' : ''; ?>">
-                <a class="nav-link" href="index.php?page=usuarios">Gestión de Usuarios</a>
-            </li>
+            <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] === "Administrador") { ?>
+                <li class="nav-item <?php echo ($page === 'usuarios') ? 'active' : ''; ?>">
+                    <a class="nav-link" href="index.php?page=usuarios">Gestión de Usuarios</a>
+                </li>
+            <?php } ?>
         </ul>
 
         <span class="navbar-text text-white mr-3">

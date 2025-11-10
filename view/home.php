@@ -70,7 +70,7 @@ $usuario = $_SESSION['usuario'];
                     </div>
                 </div>
             </div>
-
+             <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] === "Administrador") { ?>
             <!-- Tarjeta 2: Gestión de Usuarios -->
             <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 text-center">
@@ -84,7 +84,7 @@ $usuario = $_SESSION['usuario'];
                     </div>
                 </div>
             </div>
-
+            <?php }?>
             <!-- Tarjeta 3: Agenda de Citas -->
             <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 text-center">

@@ -4,12 +4,12 @@ class Usuario
 {
     private $idUsuario;
     private $nombre;
-    private $apellidos;
     private $email;
     private $nombreUsuario;
     private $pwd;
     private $estado;
     private $idRol;
+    private $idEmpleado;
 
     // ID
     public function getIdUsuario()
@@ -33,18 +33,7 @@ class Usuario
         $this->nombre = $nombre;
     }
 
-    // APELLIDOS 
-    public function getApellidos()
-    {
-        return $this->apellidos;
-    }
-
-    public function setApellidos($apellidos)
-    {
-        // puede ir vacío (""), pero no null
-        $this->apellidos = $apellidos;
-    }
-
+   
     //EMAIL
     public function getEmail()
     {
@@ -98,5 +87,14 @@ class Usuario
     public function setIdRol($idRol)
     {
         $this->idRol = (int)$idRol;
+    }
+    public function getIdEmpleado()
+    {
+        return $this->idEmpleado;
+    }
+
+    public function setIdEmpleado($id)
+    {
+        $this->idEmpleado = (int)$id;
     }
 }
