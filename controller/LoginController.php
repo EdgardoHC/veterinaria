@@ -26,7 +26,7 @@ if ($accion === "login") {
     // Buscar por correo o nombre de usuario
     $row = $dao->buscarPorEmailONombreUsuario($usuario);
 
-    if ($row && $pwd === $row['contrasena']) {
+    if ($row && $pwd === $row['contrasena'] && $row['estado'] == 1) {
 
         $_SESSION['usuario'] = [
             "id"         => $row['idusuario'],
