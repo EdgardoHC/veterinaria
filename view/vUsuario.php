@@ -22,7 +22,6 @@
 
     <script src="view/js/usuario.js"></script>
 </head>
-
 <body class="users-page">
     <?php include 'view/componets/navbar.php'; ?>
     <div class="container my-4">
@@ -58,7 +57,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Se llena por AJAX (usuario.js) -->
                         </tbody>
                     </table>
                 </div>
@@ -67,79 +65,86 @@
 
     </div>
 
-    <!-- Modal nuevo / editar usuario-->
-    <div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Nuevo usuario</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="frmUsuario" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                        <div class="form-row">
-                            <input type="hidden" id="idUsuario" name="idUsuario">
-
-                            <div class="form-group col-md-6">
-                                <label for="nombre">Nombre Completo</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre"
-                                       required maxlength="100" placeholder="Ej. Ana Pérez">
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username"
-                                       required placeholder="Ej. aperez">
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="estado">Estado del usuario</label>
-                                <select class="form-control" id="estado" name="estado" required>
-                                    <option value="">Selecciona un estado</option>
-                                    <option value="1">Activo</option>
-                                    <option value="0">Inactivo</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="email">Correo</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                       required placeholder="Ej. usuario@veterinaria.com">
-                            </div>
-
-                            <div class="form-group col-md-6">
-                                <label for="rol">Rol del usuario</label>
-                                <select class="form-control" id="rol" name="rol" required>
-                                    <option value="">Selecciona un rol</option>
-                                    <option value="1">Administrador</option>
-                                    <option value="2">Veterinario</option>
-                                    <option value="3">Recepcionista</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group col-md-6" id="grupoPwd">
-                                <label for="pwd">Contraseña</label>
-                                <input type="password" class="form-control" id="pwd" name="pwd"
-                                       placeholder="Mínimo 6 caracteres">
-                            </div>
-
-                        </div>
-
-                        <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">Cerrar</button>
-                            <button id="btnGuardar" type="submit" class="btn btn-primary">Guardar</button>
-                        </div>
-
-                    </form>
-                </div>
-
+   <!-- Modal nuevo / editar usuario-->
+<div class="modal fade" id="modalNuevoUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nuevo usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+
+            <div class="modal-body">
+                <form id="frmUsuario" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <div class="form-row">
+                        <input type="hidden" id="idUsuario" name="idUsuario">
+
+                        <div class="form-group col-md-6">
+                            <label for="nombre">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre"
+                                   required maxlength="100" placeholder="Ej. Ana Pérez">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   required placeholder="Ej. aperez">
+                        </div>
+
+                        <!-- Empleado (solo al crear) -->
+                        <div class="form-group col-md-6" id="grupoEmpleado">
+                            <label for="idempleado">Empleado</label>
+                            <select class="form-control" id="idempleado" name="idempleado" required>
+                                <option value="">Seleccione un empleado...</option>
+                            </select>
+                        </div>
+
+                        <!-- ESTE ES EL QUE VIAJA AL PHP SIEMPRE -->
+                        <input type="hidden" id="estado" name="estado" value="1">
+
+                        <!-- Estado (OCULTO al crear, VISIBLE al editar) -->
+                        <div class="form-group col-md-6" id="grupoEstado">
+                            <label for="estadoVisible">Estado del usuario</label>
+                            <select class="form-control" id="estadoVisible">
+                                <option value="1">Activo</option>
+                                <option value="0">Inactivo</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="email">Correo</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                   required placeholder="Ej. usuario@veterinaria.com">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="rol">Rol del usuario</label>
+                            <select class="form-control" id="rol" name="rol" required>
+                                <option value="">Selecciona un rol</option>
+                                <option value="1">Administrador</option>
+                                <option value="2">Veterinario</option>
+                                <option value="3">Recepcionista</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6" id="grupoPwd">
+                            <label for="pwd">Contraseña</label>
+                            <input type="password" class="form-control" id="pwd" name="pwd"
+                                   placeholder="Mínimo 6 caracteres">
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary mr-2" data-dismiss="modal">Cerrar</button>
+                        <button id="btnGuardar" type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+
+                </form>
+            </div>
+
         </div>
     </div>
-
-</body>
-
-</html>
+</div>

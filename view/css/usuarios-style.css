@@ -130,3 +130,8 @@ body.users-page {
 #btnGuardar {
     min-width: 120px;
 }
+
+/* Ocultar el estado por defecto en el modal */
+#grupoEstado {
+    display: none;
+}

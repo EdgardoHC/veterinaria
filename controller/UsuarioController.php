@@ -27,19 +27,21 @@ try {
             break;
 
         case "crear":
-            $nombre    = trim($_POST["nombre"] ?? "");
-            $apellidos = ""; // opcional
-            $email     = strtolower(trim($_POST["email"] ?? ""));
-            $username  = trim($_POST["username"] ?? "");
-            $pwd       = $_POST["pwd"] ?? "";
-            $rol       = trim($_POST["rol"] ?? "");
-            $estado    = trim($_POST["estado"] ?? "");
+           $nombre     = trim($_POST["nombre"] ?? "");
+           $email      = strtolower(trim($_POST["email"] ?? ""));
+           $username   = trim($_POST["username"] ?? "");
+           $pwd        = $_POST["pwd"] ?? "";
+           $rol        = trim($_POST["rol"] ?? "");
+           $idempleado = filter_var($_POST["idempleado"] ?? null, FILTER_VALIDATE_INT);
 
-            if ($nombre === "" || $email === "" || $username === "" || $pwd === "" || $rol === "" || $estado === "") {
+           $estado = 1; // activo por defecto
+
+            if ($nombre === "" || $email === "" || $username === "" || $pwd === "" || $rol === "" || !$idempleado) {
                 http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Todos los campos son obligatorios (excepto apellidos)"]);
+                echo json_encode(["ok" => false, "message" => "Todos los campos son obligatorios"]);
                 break;
             }
+
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 http_response_code(400);
@@ -47,16 +49,16 @@ try {
                 break;
             }
 
-            $usuario = new Usuario();
-            $usuario->setNombre($nombre);
-            //$usuario->setApellidos($apellidos);
-            $usuario->setEmail($email);
-            $usuario->setNombreUsuario($username);
-            $usuario->setPwd($pwd);
-            $usuario->setIdRol((int)$rol);
-            $usuario->setEstado((int)$estado);
+             $usuario = new Usuario();
+             $usuario->setNombre($nombre);
+             $usuario->setEmail($email);
+             $usuario->setNombreUsuario($username);
+             $usuario->setPwd($pwd);
+             $usuario->setIdRol((int)$rol);
+             $usuario->setEstado((int)$estado);   // siempre 1
+             $usuario->setIdEmpleado((int)$idempleado);
 
-            $resultado = $dao->crear($usuario);
+             $resultado = $dao->crear($usuario);
             if ($resultado) {
                 echo json_encode(["ok" => true, "message" => "Usuario creado"]);
             } else {

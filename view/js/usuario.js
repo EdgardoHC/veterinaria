@@ -5,6 +5,16 @@ $(function () {
         e.preventDefault();
 
         const accion = $("#idUsuario").val() === "" ? "crear" : "actualizar";
+
+        // 👉 Antes de serializar, sincronizamos el valor correcto de estado
+        if (accion === "crear") {
+            // Siempre activo al crear
+            $("#estado").val("1");
+        } else {
+            // En edición, lo que elija en el combo
+            $("#estado").val($("#estadoVisible").val());
+        }
+
         const payload = $(this).serialize() + "&accion=" + accion;
 
         toggleFormulario(true);
@@ -34,17 +44,15 @@ $(function () {
                 });
             }
         }).fail(function (xhr) {
-            // 👇 AQUÍ ES DONDE HEMOS CAMBIADO COSAS
             let mensaje = "Error de comunicación con el servidor";
 
             if (xhr.responseJSON && xhr.responseJSON.message) {
                 mensaje = xhr.responseJSON.message;
             } else if (xhr.responseText) {
-                // si PHP devuelve texto plano (notice, warning, fatal, etc.)
                 mensaje = xhr.responseText;
             }
 
-            console.error("Error AJAX guardar usuario:", xhr); // para ver detalles en la consola
+            console.error("Error AJAX guardar usuario:", xhr);
 
             Swal.fire({
                 icon: "error",
@@ -112,7 +120,6 @@ function cargarUsuarios() {
                 )
             );
 
-            // Estado con badge bonito
             const $estado = $("<span>")
                 .addClass("badge-estado " + (u.estado == 1 ? "activo" : "inactivo"))
                 .text(u.estado == 1 ? "Activo" : "Inactivo");
@@ -152,6 +159,19 @@ function nuevoUsuario() {
     $("#exampleModalLabel").text("Nuevo usuario");
     $("#btnGuardar").text("Guardar");
     $("#grupoPwd").show();
+
+    // siempre activo al crear
+    $("#estado").val("1");
+    $("#estadoVisible").val("1");
+
+    // CREAR: mostrar empleado, ocultar estado
+    $("#grupoEmpleado").show();
+    $("#idempleado").prop("required", true);
+
+    $("#grupoEstado").hide();
+
+    cargarEmpleadosSinUsuario();
+
     $("#modalNuevoUsuario").modal("show");
 }
 
@@ -170,11 +190,21 @@ function prepararEdicion(usuario) {
     $("#username").val(usuario.nombreusuario);
     $("#email").val(usuario.correoelectronico);
     $("#rol").val(usuario.idrol);
+
     $("#estado").val(usuario.estado);
+    $("#estadoVisible").val(usuario.estado);
+
     $("#pwd").val("");
 
     $("#exampleModalLabel").text("Editar usuario");
     $("#btnGuardar").text("Actualizar");
+
+    // EDITAR: no cambiar empleado (si quieres ocultarlo)
+    $("#grupoEmpleado").hide();
+    $("#idempleado").prop("required", false);
+
+    // EDITAR: mostrar combo de estado
+    $("#grupoEstado").show();
 
     $("#modalNuevoUsuario").modal("show");
 }
@@ -230,7 +260,7 @@ function solicitarEliminacion(id) {
             Swal.fire({
                 icon: "error",
                 title: "Ups...",
-                text:mensaje
+                text: mensaje
             });
         });
     });
@@ -242,6 +272,13 @@ function resetFormulario() {
     $("#exampleModalLabel").text("Nuevo usuario");
     $("#btnGuardar").text("Guardar");
     $("#grupoPwd").show();
+
+    // por defecto activo
+    $("#estado").val("1");
+    $("#estadoVisible").val("1");
+
+    $("#grupoEmpleado").show();
+    $("#grupoEstado").hide(); // por defecto, pensado para "nuevo"
 }
 
 function toggleFormulario(bloquear) {
@@ -254,4 +291,33 @@ function toggleFormulario(bloquear) {
             ? "Procesando..."
             : ($("#idUsuario").val() === "" ? "Guardar" : "Actualizar")
     );
+}
+
+function cargarEmpleadosSinUsuario() {
+    $.post("controller/EmpleadoController.php",
+        { accion: "listarLibres" },
+        function (res) {
+            if (res.ok) {
+                const $select = $("#idempleado");
+                $select.empty();
+                $select.append('<option value="">Seleccione un empleado...</option>');
+                res.data.forEach(e => {
+                    $select.append(`<option value="${e.idempleado}">${e.nombreCompleto}</option>`);
+                });
+            } else {
+                Swal.fire({
+                    icon: "warning",
+                    title: "No se pudieron cargar los empleados",
+                    text: res.message || "Verifica la conexión"
+                });
+            }
+        },
+        "json"
+    ).fail(function (xhr) {
+        Swal.fire({
+            icon: "error",
+            title: "Error de conexión",
+            text: xhr.responseText || "No se pudo comunicar con el servidor"
+        });
+    });
 }

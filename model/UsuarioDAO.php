@@ -61,7 +61,8 @@ class UsuarioDAO
             $idRol          = $u->getIdRol();
             $estado         = $u->getEstado();
 
-            $idempleado = 1;       
+            // Obtener el ID del empleado asociado
+            $idempleado = $u->getIdEmpleado();
 
             $contrasenaTemporal = "";
 
