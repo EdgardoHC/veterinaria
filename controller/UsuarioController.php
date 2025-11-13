@@ -55,16 +55,16 @@ try {
              $usuario->setNombreUsuario($username);
              $usuario->setPwd($pwd);
              $usuario->setIdRol((int)$rol);
-             $usuario->setEstado((int)$estado);   // siempre 1
+             $usuario->setEstado((int)$estado);    // siempre 1
              $usuario->setIdEmpleado((int)$idempleado);
 
              $resultado = $dao->crear($usuario);
-            if ($resultado) {
-                echo json_encode(["ok" => true, "message" => "Usuario creado"]);
-            } else {
-                http_response_code(500);
-                echo json_encode(["ok" => false, "message" => "No se pudo crear el usuario"]);
-            }
+             if ($resultado) {
+                 echo json_encode(["ok" => true, "message" => "Usuario creado"]);
+             } else {
+                 http_response_code(500);
+                 echo json_encode(["ok" => false, "message" => "No se pudo crear el usuario"]);
+             }
             break;
 
         case "actualizar":
@@ -74,7 +74,9 @@ try {
             $email    = strtolower(trim($_POST["email"] ?? ""));
             $rol      = trim($_POST["rol"] ?? "");
             $estado   = trim($_POST["estado"] ?? "");
+            $pwd      = $_POST["pwd"] ?? ""; 
 
+            // --- LÍNEA CORREGIDA (sin el ')' extra) ---
             if (!$id || $nombre === "" || $username === "" || $email === "" || $rol === "" || $estado === "") {
                 http_response_code(400);
                 echo json_encode(["ok" => false, "message" => "Datos invalidos"]);
@@ -91,11 +93,12 @@ try {
             $usuario->setIdUsuario($id);
             $usuario->setNombre($nombre);
             // apellidos por ahora no lo tocamos
-            //$usuario->setApellidos("");              
+            //$usuario->setApellidos("");                
             $usuario->setNombreUsuario($username);  // apodo
             $usuario->setEmail($email);
             $usuario->setEstado((int)$estado);
             $usuario->setIdRol((int)$rol);
+            $usuario->setPwd($pwd);
 
             $resultado = $dao->actualizar($usuario);
             if ($resultado) {

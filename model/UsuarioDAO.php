@@ -37,36 +37,30 @@ class UsuarioDAO
     // CREAR 
     public function crear(Usuario $u)
     {
-        
-
         $sql = "INSERT INTO usuarios 
                     (nombrecompleto,
-                     nombreusuario,
-                     correoelectronico,
-                     contrasena,
-                     idempleado,
-                     contrasenatemporal,
-                     estado,
-                     fechacreacion,
-                     idrol) 
+                    nombreusuario,
+                    correoelectronico,
+                    contrasena,
+                    idempleado,
+                    contrasenatemporal,
+                    estado,
+                    fechacreacion,
+                    idrol) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
 
         try {
             $stmt   = $this->conn->prepare($sql);
             $hashed = password_hash($u->getPwd(), PASSWORD_DEFAULT);
 
-            $nombreCompleto = $u->getNombre();      
+            $nombreCompleto = $u->getNombre();    
             $nombreUsuario  = $u->getNombreUsuario();   
             $email          = $u->getEmail();
             $idRol          = $u->getIdRol();
             $estado         = $u->getEstado();
+            $idempleado     = $u->getIdEmpleado();
+            $contrasenaTemporal = ""; // Vacío por ahora
 
-            // Obtener el ID del empleado asociado
-            $idempleado = $u->getIdEmpleado();
-
-            $contrasenaTemporal = "";
-
-            
             $stmt->bind_param(
                 "ssssissi",
                 $nombreCompleto,
@@ -87,7 +81,6 @@ class UsuarioDAO
         }
     }
 
-    // ACTUALIZAR
     public function actualizar(Usuario $u)
     {
         $sql = "UPDATE usuarios 
@@ -95,29 +88,36 @@ class UsuarioDAO
                     nombreusuario  = ?, 
                     correoelectronico = ?, 
                     idrol = ?, 
-                    estado = ?
-                WHERE idusuario = ?";
+                    estado = ?";
+        
+        $params = [];
+        $types = ""; 
+
+        $params[] = $u->getNombre();
+        $types .= "s";
+        $params[] = $u->getNombreUsuario();
+        $types .= "s";
+        $params[] = $u->getEmail();
+        $types .= "s";
+        $params[] = $u->getIdRol();
+        $types .= "i";
+        $params[] = $u->getEstado();
+        $types .= "i";
+
+        $pwd = $u->getPwd();
+        if (!empty($pwd)) {
+            $sql .= ", contrasena = ?"; 
+            $params[] = password_hash($pwd, PASSWORD_DEFAULT); 
+            $types .= "s";
+        }
+        $sql .= " WHERE idusuario = ?";
+        $params[] = $u->getIdUsuario();
+        $types .= "i";
 
         try {
             $stmt = $this->conn->prepare($sql);
-
-            $nombre    = $u->getNombre();          
-            $usuario   = $u->getNombreUsuario();   
-            $email     = $u->getEmail();
-            $idRol     = $u->getIdRol();
-            $estado    = $u->getEstado();
-            $idUsuario = $u->getIdUsuario();
-
-            $stmt->bind_param(
-                "sssiii",
-                $nombre,
-                $usuario,
-                $email,
-                $idRol,
-                $estado,
-                $idUsuario
-            );
-
+            $stmt->bind_param($types, ...$params); 
+            
             $stmt->execute();
             return $stmt->affected_rows >= 0;
         } catch (mysqli_sql_exception $e) {
@@ -126,7 +126,6 @@ class UsuarioDAO
         }
     }
 
-    // ELIMINADO lógico
     public function eliminar($id)
     {
         $sql = "UPDATE usuarios SET estado = 0 WHERE idusuario = ?";
@@ -142,13 +141,12 @@ class UsuarioDAO
         }
     }
 
-    // LOGIN: buscar por email o nombre de usuario
     public function buscarPorEmailONombreUsuario($login)
     {
         $sql = "SELECT u.*, r.nombre AS nombre_rol 
                 FROM usuarios u 
                 LEFT JOIN rol r ON u.idrol = r.idrol 
-                WHERE u.correoelectronico = ? OR u.nombreusuario = ? 
+                WHERE (u.correoelectronico = ? OR u.nombreusuario = ?)
                 LIMIT 1";
 
         try {
@@ -162,4 +160,20 @@ class UsuarioDAO
             return null;
         }
     }
-}
+    public function actualizarContrasena($idUsuario, $pwdPlano)
+    {
+        $hashed = password_hash($pwdPlano, PASSWORD_DEFAULT);
+        $sql = "UPDATE usuarios SET contrasena = ? WHERE idusuario = ?";
+
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("si", $hashed, $idUsuario);
+            $stmt->execute();
+            return $stmt->affected_rows > 0;
+        } catch (mysqli_sql_exception $e) {
+            error_log("Error al migrar hash: " . $e->getMessage());
+            return false; 
+        }
+    }
+
+} 

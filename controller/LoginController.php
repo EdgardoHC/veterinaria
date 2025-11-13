@@ -23,10 +23,30 @@ if ($accion === "login") {
         exit;
     }
 
-    // Buscar por correo o nombre de usuario
     $row = $dao->buscarPorEmailONombreUsuario($usuario);
 
-    if ($row && $pwd === $row['contrasena'] && $row['estado'] == 1) {
+    if (!$row || $row['estado'] != 1) {
+        echo json_encode(["ok" => false, "msg" => "Usuario o contraseña incorrectos"]);
+        exit;
+    }
+
+    $loginExitoso = false;
+
+    if (password_verify($pwd, $row['contrasena'])) {
+        $loginExitoso = true;
+    } 
+    else if ($pwd === $row['contrasena']) {
+        $loginExitoso = true;
+        
+        try {
+            $dao->actualizarContrasena($row['idusuario'], $pwd);
+        } catch (Exception $e) {
+  
+            error_log("Error al migrar hash de usuario: " . $row['idusuario']);
+        }
+    }
+
+    if ($loginExitoso) {
 
         $_SESSION['usuario'] = [
             "id"         => $row['idusuario'],
@@ -49,5 +69,4 @@ if ($accion === "logout") {
     exit;
 }
 
-// Si llega otra cosa:
 echo json_encode(["ok" => false, "msg" => "Acción no válida"]);
