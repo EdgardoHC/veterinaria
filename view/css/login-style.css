@@ -1,0 +1,189 @@
+/* Importación de la fuente Poppins desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem; /* Añade un pequeño padding para que el form no se pegue a los bordes en pantallas muy pequeñas */
+    background: url('https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=1964&auto=format&fit=crop') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Capa oscura sobre el fondo */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.login-container {
+    position: relative;
+    z-index: 2;
+    width: 100%; /* Ocupa el 100% del espacio disponible */
+    max-width: 420px; /* Pero no más de 420px */
+}
+
+/* Estilo del formulario con efecto "Glassmorphism" */
+.login-form {
+    width: 100%;
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    color: #fff;
+    text-align: center;
+}
+
+.login-form h2 {
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.logo-container {
+    margin-bottom: 1rem;
+}
+
+.logo-icon {
+    font-size: 3rem;
+    color: #fff;
+}
+
+.login-form p {
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Contenedor para inputs con iconos */
+.input-group-custom {
+    position: relative;
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.input-group-custom .input-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    pointer-events: none;
+}
+
+/* Campos de texto */
+.login-form .form-control {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.75rem 0.75rem 0.75rem 45px;
+    height: auto;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.login-form .form-control:focus {
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: none;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.login-form .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Botón de acceso */
+.btn-login {
+    background-color: #007bff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem;
+    font-weight: 600;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-login:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Mensaje de error */
+#msg {
+    width: 100%;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    padding: 0;
+    line-height: 0; /* Colapsa la altura cuando está vacío para no ocupar espacio */
+    opacity: 0; /* Oculto por defecto */
+    transition: all 0.3s ease-in-out;
+    box-sizing: border-box;
+}
+
+#msg:not(:empty) {
+    background-color: rgba(180, 9, 9, 0.836);
+    border: 1px solid rgba(239, 83, 80, 0.4);
+    color: #ffffff !important;
+    padding: 0.75rem;
+    line-height: 1.5;
+    opacity: 1;
+}
+
+/* Enlace "Olvidaste tu contraseña" */
+.forgot-password-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.forgot-password-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* --- Media Query para dispositivos móviles --- */
+@media (max-width: 480px) {
+    .login-form {
+        padding: 2rem 1.5rem;
+    }
+
+    .login-form h2 {
+        font-size: 1.8rem;
+    }
+
+    .logo-icon {
+        font-size: 2.5rem;
+    }
+}

@@ -1,65 +1,100 @@
 <?php
+
 class Usuario
 {
     private $idUsuario;
     private $nombre;
-    private $apellidos;
     private $email;
-    private $apodo;
+    private $nombreUsuario;
     private $pwd;
+    private $estado;
+    private $idRol;
+    private $idEmpleado;
 
-    // Getters y Setters
+    // ID
     public function getIdUsuario()
     {
         return $this->idUsuario;
     }
+
     public function setIdUsuario($idUsuario)
     {
-        $this->idUsuario = $idUsuario;
+        $this->idUsuario = (int)$idUsuario;
     }
 
+    // NOMBRE
     public function getNombre()
     {
         return $this->nombre;
     }
+
     public function setNombre($nombre)
     {
         $this->nombre = $nombre;
     }
 
-    public function getApellidos()
-    {
-        return $this->apellidos;
-    }
-    public function setApellidos($apellidos)
-    {
-        $this->apellidos = $apellidos;
-    }
-
+   
+    //EMAIL
     public function getEmail()
     {
         return $this->email;
     }
+
     public function setEmail($email)
     {
         $this->email = $email;
     }
 
-    public function getApodo()
+    //NOMBRE DE USUARIO / APODO 
+    public function getNombreUsuario()
     {
-        return $this->apodo;
-    }
-    public function setApodo($apodo)
-    {
-        $this->apodo = $apodo;
+        return $this->nombreUsuario;
     }
 
+    public function setNombreUsuario($nombreUsuario)
+    {
+        $this->nombreUsuario = $nombreUsuario;
+    }
+
+    //PASSWORD 
     public function getPwd()
     {
         return $this->pwd;
     }
+
     public function setPwd($pwd)
     {
         $this->pwd = $pwd;
+    }
+
+    // ESTADO (1 activo, 0 inactivo) 
+    public function getEstado()
+    {
+        return $this->estado;
+    }
+
+    public function setEstado($estado)
+    {
+        $this->estado = (int)$estado;
+    }
+
+    //ROL 
+    public function getIdRol()
+    {
+        return $this->idRol;
+    }
+
+    public function setIdRol($idRol)
+    {
+        $this->idRol = (int)$idRol;
+    }
+    public function getIdEmpleado()
+    {
+        return $this->idEmpleado;
+    }
+
+    public function setIdEmpleado($id)
+    {
+        $this->idEmpleado = (int)$id;
     }
 }
