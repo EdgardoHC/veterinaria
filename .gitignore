@@ -1,1 +1,9 @@
 .vscode/
+vendor/
+backups/*.sql
+backups/*.meta
+!backups/.gitkeep
+composer.lock
+node_modules/
+.env
+*.log

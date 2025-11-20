@@ -9,12 +9,15 @@ require_once 'controller/ConsultaController.php';
 
 // Definimos las rutas en un array
 $routes = [
-    "login"      => "view/login.php",
-    "dashboard" => "view/dashboard.php",
-    "home"       => "view/home.php",
-    "usuarios"   => "view/vUsuario.php",
+    "login"           => "view/login.php",
+    "dashboard"       => "view/dashboard.php",
+    "home"            => "view/home.php",
+    "usuarios"        => "view/vUsuario.php",
     "reporteUsuarios" => "reportes/reporteUsuarios.php",
-    "logout"     => "logout",
+    // RUTAS AÑADIDAS POR SEGURIDAD/HERRAMIENTAS (CÓDIGO INTEGRADO)
+    "auditoria"       => "view/vAuditoria.php", 
+    "respaldo"        => "view/vRespaldo.php",  
+    "logout"          => "logout",
 ];
 
 // Pagina pedida
@@ -70,15 +73,16 @@ if (array_key_exists($page, $routes)) {
         exit;
     }
 
-    // Proteger rutas privadas
-    $rutasProtegidas = ["dashboard","home", "usuarios", "reporteUsuarios"];
+    // Proteger rutas privadas (LISTA INTEGRADA)
+    $rutasProtegidas = ["dashboard", "home", "usuarios", "reporteUsuarios", "auditoria", "respaldo"];
     if (in_array($page, $rutasProtegidas) && !isset($_SESSION['usuario'])) {
         header("Location: index.php?page=login");
         exit;
     }
      if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] !== "Administrador") {
         // páginas restringidas solo para admin
-        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios"];
+        // Nota: 'home' se elimina de la restricción para que los usuarios normales puedan acceder a ella.
+        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios", "auditoria", "respaldo"];
 
         if (in_array($page, $soloAdmin)) {
             // puedes redirigir al home o mostrar mensaje
@@ -91,6 +95,12 @@ if (array_key_exists($page, $routes)) {
 
 } else {
     http_response_code(404);
-    require "view/errores/404.php";
+    // Verificar si existe el directorio de errores
+    $errorFile = "view/errores/404.php";
+    if (file_exists($errorFile)) {
+        require $errorFile;
+    } else {
+        require "404.php";
+    }
 }
 ?>

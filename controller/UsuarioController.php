@@ -1,139 +1,97 @@
 <?php
-require_once "../model/UsuarioDAO.php";
-require_once "../model/Usuario.php";
+// Incluir el controlador necesario (ya integrado en pasos anteriores)
+require_once 'controller/ConsultaController.php';
 
-header("Content-Type: application/json; charset=utf-8");
+// Cargar la clase de seguridad antes de iniciar la sesión
+require_once 'util/Seguridad.php';
 
-if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(405);
-    echo json_encode(["ok" => false, "message" => "Metodo no permitido"]);
-    exit;
-}
+// Iniciar sesión segura (CÓDIGO INTEGRADO)
+Seguridad::iniciarSesionSegura();
 
-$accion = $_POST["accion"] ?? "";
-if ($accion === "") {
-    http_response_code(400);
-    echo json_encode(["ok" => false, "message" => "Accion requerida"]);
-    exit;
-}
+// Definimos las rutas en un array
+$routes = [
+    "login"      => "view/login.php",
+    "dashboard" => "view/dashboard.php",
+    "home"       => "view/home.php",
+    "usuarios"   => "view/vUsuario.php",
+    "reporteUsuarios" => "reportes/reporteUsuarios.php",
+    "logout"     => "logout",
+];
 
-$dao = new UsuarioDAO();
+// Pagina pedida
+$page = $_GET['page'] ?? "login";
+$action = $_GET['action'] ?? '';
 
-try {
-    switch ($accion) {
-        case "listar":
-            $usuarios = $dao->listar();
-            echo json_encode(["ok" => true, "data" => $usuarios]);
-            break;
-
-        case "crear":
-           $nombre     = trim($_POST["nombre"] ?? "");
-           $email      = strtolower(trim($_POST["email"] ?? ""));
-           $username   = trim($_POST["username"] ?? "");
-           $pwd        = $_POST["pwd"] ?? "";
-           $rol        = trim($_POST["rol"] ?? "");
-           $idempleado = filter_var($_POST["idempleado"] ?? null, FILTER_VALIDATE_INT);
-
-           $estado = 1; // activo por defecto
-
-            if ($nombre === "" || $email === "" || $username === "" || $pwd === "" || $rol === "" || !$idempleado) {
-                http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Todos los campos son obligatorios"]);
-                break;
-            }
-
-
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Email invalido"]);
-                break;
-            }
-
-             $usuario = new Usuario();
-             $usuario->setNombre($nombre);
-             $usuario->setEmail($email);
-             $usuario->setNombreUsuario($username);
-             $usuario->setPwd($pwd);
-             $usuario->setIdRol((int)$rol);
-             $usuario->setEstado((int)$estado);    // siempre 1
-             $usuario->setIdEmpleado((int)$idempleado);
-
-             $resultado = $dao->crear($usuario);
-             if ($resultado) {
-                 echo json_encode(["ok" => true, "message" => "Usuario creado"]);
-             } else {
-                 http_response_code(500);
-                 echo json_encode(["ok" => false, "message" => "No se pudo crear el usuario"]);
-             }
-            break;
-
-        case "actualizar":
-            $id       = filter_var($_POST["idUsuario"] ?? null, FILTER_VALIDATE_INT);
-            $nombre   = trim($_POST["nombre"] ?? "");
-            $username = trim($_POST["username"] ?? "");
-            $email    = strtolower(trim($_POST["email"] ?? ""));
-            $rol      = trim($_POST["rol"] ?? "");
-            $estado   = trim($_POST["estado"] ?? "");
-            $pwd      = $_POST["pwd"] ?? ""; 
-
-            // --- LÍNEA CORREGIDA (sin el ')' extra) ---
-            if (!$id || $nombre === "" || $username === "" || $email === "" || $rol === "" || $estado === "") {
-                http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Datos invalidos"]);
-                break;
-            }
-
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Email invalido"]);
-                break;
-            }
-
-            $usuario = new Usuario();
-            $usuario->setIdUsuario($id);
-            $usuario->setNombre($nombre);
-            // apellidos por ahora no lo tocamos
-            //$usuario->setApellidos("");                
-            $usuario->setNombreUsuario($username);  // apodo
-            $usuario->setEmail($email);
-            $usuario->setEstado((int)$estado);
-            $usuario->setIdRol((int)$rol);
-            $usuario->setPwd($pwd);
-
-            $resultado = $dao->actualizar($usuario);
-            if ($resultado) {
-                echo json_encode(["ok" => true, "message" => "Usuario actualizado"]);
-            } else {
-                http_response_code(500);
-                echo json_encode(["ok" => false, "message" => "No se pudo actualizar el usuario"]);
-            }
-            break;
-
-        case "eliminar":
-            $id = filter_var($_POST["idUsuario"] ?? null, FILTER_VALIDATE_INT);
-            if (!$id) {
-                http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Identificador invalido"]);
-                break;
-            }
-
-            $resultado = $dao->eliminar($id);
-            if ($resultado) {
-                echo json_encode(["ok" => true, "message" => "Usuario eliminado"]);
-            } else {
-                http_response_code(500);
-                echo json_encode(["ok" => false, "message" => "No se pudo eliminar el usuario"]);
-            }
-            break;
-
+// Manejar acciones primero (Funcionalidad de procesos)
+if (!empty($action)) {
+    switch($action) {
+        case 'ingresar-consulta':
+            $controller = new ConsultaController();
+            $controller->mostrarIngresoConsulta();
+            exit;
+            
+        case 'buscarExpediente':
+            $controller = new ConsultaController();
+            $controller->buscarExpediente();
+            exit;
+            
+        case 'guardarConsulta':
+            $controller = new ConsultaController();
+            $controller->guardarConsulta();
+            exit;
+            
+        case 'agregarReceta':
+            $controller = new ConsultaController();
+            $controller->agregarReceta();
+            exit;
+            
+        case 'obtenerHistorial':
+            $controller = new ConsultaController();
+            $controller->obtenerHistorial();
+            exit;
+            
+        case 'obtenerRecetas':
+            $controller = new ConsultaController();
+            $controller->obtenerRecetas();
+            exit;
+            
         default:
-            http_response_code(400);
-            echo json_encode(["ok" => false, "message" => "Accion no soportada"]);
+            // Si la acción no existe, continuamos con el flujo normal de páginas
             break;
     }
-} catch (Throwable $e) {
-    // AHORA devolvemos el mensaje real para que lo veas en el SweetAlert
-    error_log("Error en UsuarioController: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(["ok" => false, "message" => $e->getMessage()]);
 }
+
+// Verificamos si existe la ruta de página
+if (array_key_exists($page, $routes)) {
+
+    // Si es logout
+    if ($page === "logout") {
+        session_destroy();
+        header("Location: index.php?page=login");
+        exit;
+    }
+
+    // Proteger rutas privadas (LÓGICA DE SEGURIDAD INTEGRADA)
+    $rutasProtegidas = ["dashboard","home", "usuarios", "reporteUsuarios"];
+    if (in_array($page, $rutasProtegidas) && !isset($_SESSION['usuario'])) {
+        header("Location: index.php?page=login");
+        exit;
+    }
+     if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] !== "Administrador") {
+        // páginas restringidas solo para admin
+        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios"];
+
+        if (in_array($page, $soloAdmin)) {
+            // puedes redirigir al home o mostrar mensaje
+            header("Location: index.php?page=home");
+            exit;
+        }
+    }
+    // Incluir la vista correspondiente
+    require $routes[$page];
+
+} else {
+    http_response_code(404);
+    require "view/errores/404.php";
+}
+?>
