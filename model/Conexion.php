@@ -6,10 +6,11 @@ class Conexion
 
     private function __construct()
     {
+        // CÓDIGO FINAL E INTEGRADO (Sin marcas de conflicto)
         $host = "localhost";
         $db = "veterinaria";
         $user = "root";
-        $pass = "";
+        $pass = ""; // Contraseña vacía para la configuración local estándar de XAMPP
 
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
