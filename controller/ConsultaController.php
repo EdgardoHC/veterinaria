@@ -1,7 +1,7 @@
 <?php
-require_once '../model/ExpedienteDAO.php';
-require_once '../model/MascotaDAO.php';
-require_once '../model/RecetaDAO.php';
+require_once __DIR__ . '/../model/ExpedienteDAO.php';
+require_once __DIR__ . '/../model/MascotaDAO.php';
+require_once __DIR__ . '/../model/UsuarioDAO.php';
 
 class ConsultaController {
     private $expedienteDAO;
@@ -32,7 +32,7 @@ class ConsultaController {
             'idexpediente' => $_POST['idexpediente'],
             'peso' => $_POST['peso'],
             'altura' => $_POST['altura'],
-            'idusuario' => 1 // Temporal - luego obtener de sesión
+            'idusuario' => 1 
         ];
         $resultado = $this->expedienteDAO->guardarConsulta($datos);
         echo json_encode($resultado);

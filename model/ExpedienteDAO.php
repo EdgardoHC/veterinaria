@@ -100,5 +100,20 @@ class ExpedienteDAO {
         
         return $historial;
     }
+    public function createExpediente($idMascota, $fecha, $descripcion, $idVeterinario)
+{
+    $query = "INSERT INTO expediente (idmascota, fecha, descripcion, idusuario)
+              VALUES (?, ?, ?, ?)";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param("issi", $idMascota, $fecha, $descripcion, $idVeterinario);
+
+    if ($stmt->execute()) {
+        return $stmt->insert_id;
+    } else {
+        throw new Exception("Error al crear expediente: " . $stmt->error);
+    }
+}
+
 }
 ?>

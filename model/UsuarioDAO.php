@@ -98,4 +98,21 @@ class UsuarioDAO
             return null;
         }
     }
+
+    public function listarVeterinarios()
+    {
+        $sql = "SELECT u.idUsuario, u.nombre, u.apellidos 
+                FROM usuarios u
+                INNER JOIN puestodetrabajo p ON u.idPuesto = p.idPuesto
+                WHERE p.nombre = 'veterinario'
+                ORDER BY u.nombre ASC";
+
+        try {
+            $result = $this->conn->query($sql);
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            error_log("Error al listar veterinarios: " . $e->getMessage());
+            return [];
+        }
+    }
 }
