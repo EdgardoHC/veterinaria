@@ -1,0 +1,6 @@
+# Proteger directorio de respaldos
+# Grupo 6: Seguridad, auditoría y respaldo de datos
+
+Order Deny,Allow
+Deny from all
+

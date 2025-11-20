@@ -5,6 +5,8 @@ $routes = [
     "dashboard" => "view/dashboard.php",
     "usuarios"  => "view/vUsuario.php",
     "reporteUsuarios" => "reportes/reporteUsuarios.php",
+    "auditoria" => "view/vAuditoria.php",
+    "respaldo"  => "view/vRespaldo.php",
     "logout"    => "logout",
 ];
 
@@ -22,7 +24,7 @@ if (array_key_exists($page, $routes)) {
     }
 
     // Proteger rutas privadas
-    $rutasProtegidas = ["dashboard", "usuarios", "reporteUsuarios"];
+    $rutasProtegidas = ["dashboard", "usuarios", "reporteUsuarios", "auditoria", "respaldo"];
     if (in_array($page, $rutasProtegidas) && !isset($_SESSION['usuario'])) {
         header("Location: index.php?page=login");
         exit;
@@ -33,5 +35,11 @@ if (array_key_exists($page, $routes)) {
 
 } else {
     http_response_code(404);
-    require "view/errores/404.php";
+    // Verificar si existe el directorio de errores
+    $errorFile = "view/errores/404.php";
+    if (file_exists($errorFile)) {
+        require $errorFile;
+    } else {
+        require "404.php";
+    }
 }
