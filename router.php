@@ -1,8 +1,13 @@
 <?php
+// Iniciar sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // Definimos las rutas en un array
 $routes = [
     "login"     => "view/login.php",
     "dashboard" => "view/dashboard.php",
+    "home"      => "view/home.php",
     "usuarios"  => "view/vUsuario.php",
     "reporteUsuarios" => "reportes/reporteUsuarios.php",
     "logout"    => "logout",
@@ -22,12 +27,21 @@ if (array_key_exists($page, $routes)) {
     }
 
     // Proteger rutas privadas
-    $rutasProtegidas = ["dashboard", "usuarios", "reporteUsuarios"];
+    $rutasProtegidas = ["dashboard","home", "usuarios", "reporteUsuarios"];
     if (in_array($page, $rutasProtegidas) && !isset($_SESSION['usuario'])) {
         header("Location: index.php?page=login");
         exit;
     }
+     if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] !== "Administrador") {
+        // páginas restringidas solo para admin
+        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios"];
 
+        if (in_array($page, $soloAdmin)) {
+            // puedes redirigir al home o mostrar mensaje
+            header("Location: index.php?page=home");
+            exit;
+        }
+    }
     // Incluir la vista correspondiente
     require $routes[$page];
 
