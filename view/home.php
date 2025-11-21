@@ -1,5 +1,6 @@
 <?php
-$usuario = $_SESSION['usuario'];
+// Aseguramos la existencia de la variable $usuario para la bienvenida y protección de rutas.
+$usuario = $_SESSION['usuario']; 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -39,13 +40,10 @@ $usuario = $_SESSION['usuario'];
 </head>
 <body>
 
-    <!-- ======== BARRA DE NAVEGACIÓN ======== -->
     <?php include 'view/componets/navbar.php'; ?>
 
-    <!-- ======== CONTENIDO PRINCIPAL ======== -->
     <main class="container mt-5">
 
-        <!-- --- Jumbotron de Bienvenida --- -->
         <div class="jumbotron text-center">
             <h1 class="display-4">¡Bienvenido de nuevo!</h1>
             <p class="lead">Sistema de Gestión Veterinaria. Desde aquí puedes acceder a todas las funciones principales.</p>
@@ -53,11 +51,9 @@ $usuario = $_SESSION['usuario'];
             <p>Selecciona una de las siguientes opciones para comenzar a trabajar.</p>
         </div>
 
-        <!-- --- Tarjetas de Acceso Rápido (de ejemplos)--- -->
         <h2 class="text-center mb-4">Menú Principal</h2>
         <div class="row">
 
-            <!-- Tarjeta 1: Gestionar Mascotas -->
             <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 text-center">
                     <div class="card-body">
@@ -70,8 +66,8 @@ $usuario = $_SESSION['usuario'];
                     </div>
                 </div>
             </div>
+            
              <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] === "Administrador") { ?>
-            <!-- Tarjeta 2: Gestión de Usuarios -->
             <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 text-center">
                     <div class="card-body">
@@ -85,7 +81,6 @@ $usuario = $_SESSION['usuario'];
                 </div>
             </div>
             <?php }?>
-            <!-- Tarjeta 3: Agenda de Citas -->
             <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 text-center">
                     <div class="card-body">
@@ -99,17 +94,21 @@ $usuario = $_SESSION['usuario'];
                 </div>
             </div>
 
-
+            <div class="col-12 mt-4 text-center">
+                <h3>Catálogos de Sistema</h3>
+                <p>
+                    <a href="index.php?page=raza" class="btn btn-outline-secondary m-1">Raza</a>
+                    <a href="index.php?page=padecimientos" class="btn btn-outline-secondary m-1">Padecimiento</a>
+                </p>
+            </div>
         </div>
     </main>
     
-    <!-- ======== FOOTER ======== -->
     <footer class="text-center text-muted mt-5 mb-4">
         <p>&copy; <?php echo date("Y"); ?> Veterinaria. Todos los derechos reservados.</p>
     </footer>
 
 
-    <!-- Scripts de JavaScript -->
     <script src="view/vendor/jquery3.7.1/jquery.min.js"></script>
     <script src="view/vendor/bootstrap-4.6.2-dist/js/bootstrap.bundle.min.js"></script>
 </body>
