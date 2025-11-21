@@ -7,7 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // Agregar controladores necesarios (De Procesos)
 // Mantenemos la inclusión del controlador. Si el archivo falta, 
 // el bloque de acciones está comentado, por lo que no causará error.
-require_once 'controller/ConsultaController.php';
+//require_once 'controller/ConsultaController.php';
 
 // Definimos las rutas en un array
 // Unificamos las declaraciones de rutas
@@ -22,6 +22,9 @@ $routes = [
     "raza"            => "view/raza.php",
     "padecimientos"   => "view/padecimientos.php",
     "razas"           => "view/razas.php", // De la versión Stashed
+
+    "areas"           => "view/area_trabajo.php",
+    "puestos"         => "view/puesto_trabajo.php",
     
     // RUTAS DE SEGURIDAD
     "auditoria"       => "view/vAuditoria.php", 
@@ -98,7 +101,7 @@ if (array_key_exists($page, $routes)) {
     // Restricciones de Rol (Admin)
     if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] !== "Administrador") {
         // Se incluyen las rutas de catálogo que solo el admin debe gestionar.
-        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios", "auditoria", "respaldo", "raza", "padecimientos", "razas"];
+        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios", "auditoria", "respaldo", "raza", "padecimientos", "razas", "areas", "puestos"];
 
         if (in_array($page, $soloAdmin)) {
             // redirigir al home

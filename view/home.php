@@ -94,14 +94,18 @@ $usuario = $_SESSION['usuario'];
                 </div>
             </div>
 
-            <div class="col-12 mt-4 text-center">
+            <<div class="col-12 mt-4 text-center">
                 <h3>Catálogos de Sistema</h3>
                 <p>
                     <a href="index.php?page=raza" class="btn btn-outline-secondary m-1">Raza</a>
                     <a href="index.php?page=padecimientos" class="btn btn-outline-secondary m-1">Padecimiento</a>
+                    
+                    <a href="index.php?page=areas" class="btn btn-outline-primary m-1"><i class="fas fa-building"></i> Áreas</a>
+                    <a href="index.php?page=puestos" class="btn btn-outline-primary m-1"><i class="fas fa-id-badge"></i> Puestos</a>
                 </p>
             </div>
-        </div>
+
+        
     </main>
     
     <footer class="text-center text-muted mt-5 mb-4">
