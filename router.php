@@ -5,10 +5,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Agregar controladores necesarios (De Procesos)
+// Mantenemos la inclusión del controlador. Si el archivo falta, 
+// el bloque de acciones está comentado, por lo que no causará error.
 require_once 'controller/ConsultaController.php';
-// Nota: Si el LoginController.php usa Seguridad::iniciarSesionSegura(), 
-// este archivo router.php ya no necesita el session_start(). 
-// Pero lo mantenemos por compatibilidad.
 
 // Definimos las rutas en un array
 // Unificamos las declaraciones de rutas
@@ -18,23 +17,27 @@ $routes = [
     "home"            => "view/home.php",
     "usuarios"        => "view/vUsuario.php",
     "reporteUsuarios" => "reportes/reporteUsuarios.php",
-    // Rutas de Catálogo (Equipo 2)
+    
+    // RUTAS DE CATÁLOGO (Integradas de Updated upstream y Stash)
     "raza"            => "view/raza.php",
     "padecimientos"   => "view/padecimientos.php",
-    // Rutas de Seguridad (Integradas)
+    "razas"           => "view/razas.php", // De la versión Stashed
+    
+    // RUTAS DE SEGURIDAD
     "auditoria"       => "view/vAuditoria.php", 
     "respaldo"        => "view/vRespaldo.php",  
     "logout"          => "logout",
 ];
 
 // Pagina pedida
-// CAMBIO CLAVE: Usamos 'home' como página por defecto si el usuario está logueado,
-// pero si no lo está, debe ir a 'login'.
+// Lógica de navegación combinada: si está logueado, va a 'home'; si no, va a 'login'.
 $defaultPage = isset($_SESSION['usuario']) ? "home" : "login";
 $page = $_GET['page'] ?? $defaultPage;
 $action = $_GET['action'] ?? '';
 
 // Manejar acciones primero (CÓDIGO DEL EQUIPO 4)
+// Mantenemos el bloque comentado hasta que el compañero suba los archivos DAO faltantes.
+/*
 if (!empty($action)) {
     switch($action) {
         case 'ingresar-consulta':
@@ -72,6 +75,7 @@ if (!empty($action)) {
             break;
     }
 }
+*/
 
 // Verificamos si existe la ruta de página
 if (array_key_exists($page, $routes)) {
@@ -83,9 +87,8 @@ if (array_key_exists($page, $routes)) {
         exit;
     }
 
-    // Proteger rutas privadas (LISTA INTEGRADA)
-    // El usuario NO logueado solo puede ver 'login'.
-    $rutasProtegidas = array_keys($routes); // Todas las rutas excepto login/logout son protegidas
+    // Proteger rutas privadas
+    $rutasProtegidas = array_keys($routes);
     
     if (in_array($page, $rutasProtegidas) && $page !== 'login' && !isset($_SESSION['usuario'])) {
         header("Location: index.php?page=login");
@@ -93,10 +96,9 @@ if (array_key_exists($page, $routes)) {
     }
 
     // Restricciones de Rol (Admin)
-     if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] !== "Administrador") {
-        // páginas restringidas solo para admin
+    if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] !== "Administrador") {
         // Se incluyen las rutas de catálogo que solo el admin debe gestionar.
-        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios", "auditoria", "respaldo", "raza", "padecimientos"];
+        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios", "auditoria", "respaldo", "raza", "padecimientos", "razas"];
 
         if (in_array($page, $soloAdmin)) {
             // redirigir al home

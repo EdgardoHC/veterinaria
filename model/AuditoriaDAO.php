@@ -22,22 +22,34 @@ class AuditoriaDAO
     {
         $sql = "INSERT INTO auditoria (
             idUsuario, accion, tabla, idRegistro, 
-            datosAnteriores, datosNuevos, ip, userAgent, fecha
+            datosAnteriores, datosNuevos, ipAddress, userAgent, fecha
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
         try {
             $stmt = $this->conn->prepare($sql);
+            
+            // Corregido: Asignar los valores a variables antes de bind_param
+            $idUsuario = $auditoria->getIdUsuario();
+            $accion = $auditoria->getAccion();
+            $tabla = $auditoria->getTabla();
+            $idRegistro = $auditoria->getIdRegistro();
+            $datosAnteriores = $auditoria->getDatosAnteriores();
+            $datosNuevos = $auditoria->getDatosNuevos();
+            $ip = $auditoria->getIp();
+            $userAgent = $auditoria->getUserAgent();
+
             $stmt->bind_param(
                 "isssssss",
-                $auditoria->getIdUsuario(),
-                $auditoria->getAccion(),
-                $auditoria->getTabla(),
-                $auditoria->getIdRegistro(),
-                $auditoria->getDatosAnteriores(),
-                $auditoria->getDatosNuevos(),
-                $auditoria->getIp(),
-                $auditoria->getUserAgent()
+                $idUsuario,
+                $accion,
+                $tabla,
+                $idRegistro,
+                $datosAnteriores,
+                $datosNuevos,
+                $ip,
+                $userAgent
             );
+            
             $stmt->execute();
             return $stmt->affected_rows > 0;
         } catch (mysqli_sql_exception $e) {
@@ -51,7 +63,8 @@ class AuditoriaDAO
      */
     public function listar($filtros = [])
     {
-        $sql = "SELECT a.*, u.nombre, u.apellidos, u.apodo 
+        // CORRECCIÓN: Se usa u.nombreUsuario en lugar de u.apodo
+        $sql = "SELECT a.*, u.nombre, u.apellidos, u.nombreUsuario 
                 FROM auditoria a
                 LEFT JOIN usuarios u ON a.idUsuario = u.idUsuario
                 WHERE 1=1";
@@ -94,7 +107,8 @@ class AuditoriaDAO
         try {
             if (!empty($parametros)) {
                 $stmt = $this->conn->prepare($sql);
-                $stmt->bind_param($tipos, ...$parametros);
+                // CÓDIGO CORREGIDO: Se usa call_user_func_array para evitar el Notice de PHP 8
+                call_user_func_array(array($stmt, 'bind_param'), array_merge(array($tipos), $parametros));
                 $stmt->execute();
                 $result = $stmt->get_result();
             } else {
@@ -140,7 +154,8 @@ class AuditoriaDAO
         try {
             if (!empty($parametros)) {
                 $stmt = $this->conn->prepare($sql);
-                $stmt->bind_param($tipos, ...$parametros);
+                // CÓDIGO CORREGIDO: Se usa call_user_func_array para evitar el Notice de PHP 8
+                call_user_func_array(array($stmt, 'bind_param'), array_merge(array($tipos), $parametros));
                 $stmt->execute();
                 $result = $stmt->get_result();
             } else {
@@ -154,4 +169,3 @@ class AuditoriaDAO
         }
     }
 }
-

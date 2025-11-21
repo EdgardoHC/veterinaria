@@ -19,6 +19,9 @@ if (isset($_POST['accion']) && $_POST['accion'] === "login") {
     $usuario = Seguridad::sanitizarEntrada($_POST['usuario'] ?? '');
     $pwd = $_POST['pwd'] ?? '';
 
+    // Limpiar los intentos fallidos de login para el usuario
+    Seguridad::limpiarIntentosLogin($usuario);
+
     // Verificar intentos de login (Funcionalidad de Seguridad)
     if (!Seguridad::verificarIntentosLogin($usuario)) {
         $tiempoRestante = Seguridad::obtenerTiempoBloqueo($usuario);
@@ -64,9 +67,11 @@ if ($accion === "login") {
         
         try {
             // Se actualiza la contraseña a hash
-            $dao->actualizarContrasena($row['idusuario'], $pwd);
+            // CÓDIGO CORREGIDO: $row['idUsuario'] en lugar de $row['idusuario']
+            $dao->actualizarContrasena($row['idUsuario'], $pwd);
         } catch (Exception $e) {
-            error_log("Error al migrar hash de usuario: " . $row['idusuario']);
+            // CÓDIGO CORREGIDO: $row['idUsuario'] en lugar de $row['idusuario']
+            error_log("Error al migrar hash de usuario: " . $row['idUsuario']);
         }
     }
 
@@ -80,11 +85,12 @@ if ($accion === "login") {
 
         // Guardamos datos en la sesión
         $_SESSION['usuario'] = [
-            "id"         => $row['idusuario'],
-            "nombre"     => $row['nombrecompleto'],
-            "usuario"    => $row['nombreusuario'],
-            "email"      => $row['correoelectronico'],
-            "rol_nombre" => $row['nombre_rol']
+            // CÓDIGO CORREGIDO: $row['idusuario'] en lugar de $row['idUsuario']
+            "id"         => $row['idusuario'] ?? $row['idUsuario'] ?? '',
+            "nombre"     => $row['nombrecompleto'] ?? '',
+            "usuario"    => $row['nombreusuario'] ?? '',
+            "email"      => $row['correoelectronico'] ?? '',
+            "rol_nombre" => $row['nombre_rol'] ?? '' // El nombre de la columna de roles es 'nombre_rol'
         ];
 
         $_SESSION['ultima_actividad'] = time();
@@ -92,9 +98,11 @@ if ($accion === "login") {
 
         // Registrar login en auditoría
         $auditoriaService->registrarAccion(
+            // CÓDIGO CORREGIDO: $row['idUsuario'] en lugar de $row['idusuario']
             $row['idUsuario'],
             Auditoria::ACCION_LOGIN,
             'usuarios',
+            // CÓDIGO CORREGIDO: $row['idUsuario'] en lugar de $row['idusuario']
             $row['idUsuario']
         );
 
