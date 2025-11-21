@@ -1,11 +1,7 @@
 <?php
 // Definimos las rutas en un array
-//para el equipo 2: se iniciará con la pantalla de home.
 $routes = [
     "login"     => "view/login.php",
-    "home" => "view/home.php",    
-    "raza" => "view/raza.php",// para el equipo 2: declaren las rutas de sus catalogos en el arreglo.
-    "padecimientos" => "view/padecimientos.php",
     "dashboard" => "view/dashboard.php",
     "usuarios"  => "view/vUsuario.php",
     "reporteUsuarios" => "reportes/reporteUsuarios.php",
@@ -13,7 +9,7 @@ $routes = [
 ];
 
 // Pagina pedida
-$page = $_GET['page'] ?? "home";
+$page = $_GET['page'] ?? "login";
 
 // Verificamos si existe la ruta
 if (array_key_exists($page, $routes)) {
