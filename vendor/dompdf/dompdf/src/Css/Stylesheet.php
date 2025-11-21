@@ -1303,9 +1303,8 @@ class Stylesheet
 EOL;
 
         // replace data URIs with blob URIs
-        $offset = 0;
-        while ($offset < strlen($css) && ($start = strpos($css, "data:", $offset)) !== false) {
-            $len = 0;
+        while (($start = strpos($css, "data:")) !== false) {
+            $len = null;
             $prev = $css[$start - 1];
             $pattern = "/(?<!\\\\)['\")]/";
             switch ($prev) {
@@ -1318,7 +1317,6 @@ EOL;
                     $pattern = "/(?<!\\\\)\\)/";
                     break;
                 default:
-                    $offset = $start + 5;
                     continue (2);
             }
             if (preg_match($pattern, $css, $matches, PREG_OFFSET_CAPTURE, $start)) {
@@ -1328,7 +1326,6 @@ EOL;
             $data_uri_hash = md5($data_uri);
             $this->_blobs[$data_uri_hash] = $data_uri;
             $css = substr($css, 0, $start) . "blob://" . $data_uri_hash . ($len > 0 ? substr($css, $start + $len) : "");
-            $offset = $start + 7 + strlen($data_uri_hash);
         }
 
         $matches = [];
