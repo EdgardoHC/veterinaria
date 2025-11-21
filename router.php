@@ -4,12 +4,13 @@
 $routes = [
     "login"     => "view/login.php",
     "home" => "view/home.php",
-    "raza" => "view/raza.php", // para el equipo 2: declaren las rutas de sus catalogos en el arreglo.
+    "raza" => "view/raza.php",
     "vacunas" => "view/vacunas.php",
-    "Encargado" => "view/encargado.php",
+    "encargado" => "view/encargado.php",
     "padecimientos" => "view/padecimientos.php",
     "dashboard" => "view/dashboard.php",
     "usuarios"  => "view/vUsuario.php",
+    "tipoControlMedico" => "view/tipo_control_medico.php",
     "reporteUsuarios" => "reportes/reporteUsuarios.php",
     "logout"    => "logout",
 ];

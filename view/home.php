@@ -47,7 +47,7 @@ $usuario = $_SESSION['usuario']; // esta es la sesión parte del trabajo del equ
 <body>
 
     <!-- ======== BARRA DE NAVEGACIÓN ======== -->
-    <?php include 'view/componets/navbar.php'; ?>
+    <?php include 'view/components/navbar.php'; ?>
     <!-- para el equipo 2: ignoren esta advertencia porque cuando se una el sistema por completo desaparecerá -->
 
     <!-- ======== CONTENIDO PRINCIPAL ======== -->
