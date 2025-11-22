@@ -1,8 +1,11 @@
 <?php
-require_once "../model/UsuarioDAO.php";
-require_once "../model/Usuario.php";
+require_once __DIR__ . "/../model/UsuarioDAO.php";
+require_once __DIR__ . "/../model/Usuario.php";
 
 header("Content-Type: application/json; charset=utf-8");
+
+error_reporting(E_ALL);
+ini_set('display_errors', 0); 
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(405);
@@ -11,6 +14,13 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 $accion = $_POST["accion"] ?? "";
+
+if (isset($_GET['op']) && $_GET['op'] === 'listar_veterinarios_json') {
+    $dao = new UsuarioDAO();
+    echo json_encode($dao->listarVeterinarios());
+    exit;
+}
+
 if ($accion === "") {
     http_response_code(400);
     echo json_encode(["ok" => false, "message" => "Accion requerida"]);
@@ -105,7 +115,7 @@ try {
                 echo json_encode(["ok" => true, "message" => "Usuario actualizado"]);
             } else {
                 http_response_code(500);
-                echo json_encode(["ok" => false, "message" => "No se pudo actualizar el usuario"]);
+                echo json_encode(["ok" => false, "message" => "No se pudo actualizar"]);
             }
             break;
 
@@ -113,7 +123,7 @@ try {
             $id = filter_var($_POST["idUsuario"] ?? null, FILTER_VALIDATE_INT);
             if (!$id) {
                 http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Identificador invalido"]);
+                echo json_encode(["ok" => false, "message" => "ID invalido"]);
                 break;
             }
 
@@ -122,7 +132,7 @@ try {
                 echo json_encode(["ok" => true, "message" => "Usuario eliminado"]);
             } else {
                 http_response_code(500);
-                echo json_encode(["ok" => false, "message" => "No se pudo eliminar el usuario"]);
+                echo json_encode(["ok" => false, "message" => "No se pudo eliminar"]);
             }
             break;
 
