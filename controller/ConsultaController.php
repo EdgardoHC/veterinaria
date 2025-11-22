@@ -5,8 +5,10 @@ header('Content-Type: application/json');
 
 $action = $_GET['action'] ?? '';
 
+// Crear instancia del DAO
 $dao = new ExpedienteDAO();
 
+// Manejo de diferentes acciones relacionadas con consultas
 switch ($action) {
     case 'buscar':
         $busqueda = $_POST['busqueda'] ?? '';

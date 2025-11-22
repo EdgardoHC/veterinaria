@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../model/ExpedienteDAO.php';
-
+// Controlador para manejar la creación de expedientes
 class ExpedienteController {
     public function store() {
         header('Content-Type: application/json');
@@ -25,6 +25,7 @@ class ExpedienteController {
     }
 }
 
+// Manejo de la solicitud para crear un expediente
 if (isset($_GET['op']) && $_GET['op'] === 'store') {
     $controller = new ExpedienteController();
     $controller->store();
