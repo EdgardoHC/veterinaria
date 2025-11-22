@@ -15,19 +15,17 @@ switch ($action) {
             exit;
         }
         
-        // Llamamos a la función buscar del DAO
         $resultado = $dao->buscarExpediente($busqueda);
         echo json_encode($resultado);
         break;
 
     case 'historial':
         $idExpediente = $_POST['idexpediente'] ?? 0;
-        $historial = $dao->obtenerHistorialMascota($idExpediente); // Ojo: puede que necesites buscar por idMascota
+        $historial = $dao->obtenerHistorialMascota($idExpediente); 
         echo json_encode($historial);
         break;
 
     case 'guardar':
-        // Recibir datos del formulario
         $datos = [
             'idexpediente' => $_POST['idexpediente'],
             'fecha'        => $_POST['fecha'],
@@ -35,7 +33,7 @@ switch ($action) {
             'altura'       => $_POST['altura'],
             'resumen'      => $_POST['resumen'],
             'diagnostico'  => $_POST['diagnostico'],
-            'idusuario'    => $_POST['idusuario'] ?? 1 // Por defecto 1 si no hay login
+            'idusuario'    => $_POST['idusuario'] ?? 1 
         ];
 
         $res = $dao->guardarConsulta($datos);

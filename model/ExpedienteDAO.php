@@ -10,7 +10,6 @@ class ExpedienteDAO {
         $this->conn = $conexion->getConexion();  
     }
     
-    // 1. BUSCAR EXPEDIENTE
     public function buscarExpediente($busqueda) {
         // Si es número, buscamos por ID Expediente, si no, por Nombre Mascota
         if (is_numeric($busqueda)) {
@@ -36,7 +35,7 @@ class ExpedienteDAO {
                     INNER JOIN mascota m ON e.idmascota = m.idmascota
                     INNER JOIN raza r ON m.idraza = r.idraza
                     INNER JOIN encargado enc ON m.idencargado = enc.idencargado
-                    WHERE m.nombres LIKE ?"; // OJO: 'nombres' en plural
+                    WHERE m.nombres LIKE ?"; 
             $stmt = $this->conn->prepare($sql);
             $term = "%$busqueda%";
             $stmt->bind_param("s", $term);
