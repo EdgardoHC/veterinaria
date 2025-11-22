@@ -1,11 +1,3 @@
-<?php
-// session_start();
-// if (!isset($_SESSION['usuario'])) {
-//     header('Location: ../index.php');
-//     exit();
-// }
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,36 +9,30 @@
     <style>
         .card-header { font-weight: bold; }
         .required:after { content: " *"; color: red; }
-        .historial-item { border-left: 4px solid #007bff; padding-left: 15px; margin-bottom: 15px; }
-        .receta-item { background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .historial-item { border-left: 4px solid #007bff; padding-left: 15px; margin-bottom: 15px; background-color: #f8f9fa; padding: 10px; border-radius: 0 5px 5px 0; }
+        .modal-header .btn-close { margin: -0.5rem -0.5rem -0.5rem auto; }
     </style>
 </head>
 <body>
-    <?php // include '../includes/header.php'; ?>
     
-    <div class="container-fluid mt-4">
-        <!-- SECCIÓN 1: Buscador de Expediente -->
+    <div class="container mt-4 mb-5">
         <div class="row mb-4">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
-                        <h5><i class="fas fa-search"></i> Buscar Expediente</h5>
+                        <h5 class="mb-0"><i class="fas fa-search"></i> Buscar Expediente</h5>
                     </div>
                     <div class="card-body">
                         <form id="formBuscarExpediente">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="busqueda" class="required">Buscar por ID Expediente o Nombre de Mascota:</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="busqueda" 
-                                                   placeholder="Ej: 123 o 'Firulais'" required>
-                                            <div class="input-group-append">
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="fas fa-search"></i> Buscar
-                                                </button>
-                                            </div>
-                                        </div>
+                            <div class="row align-items-end">
+                                <div class="col-md-8">
+                                    <label for="busqueda" class="form-label required">Buscar por ID Expediente o Nombre de Mascota:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="busqueda" 
+                                               placeholder="Ej: 10 o 'Firulais'" required>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-search"></i> Buscar
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -56,29 +42,28 @@
             </div>
         </div>
 
-        <!-- SECCIÓN 2: Información del Expediente -->
         <div id="infoExpediente" class="row mb-4" style="display: none;">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card shadow-sm border-info">
                     <div class="card-header bg-info text-white">
-                        <h5><i class="fas fa-paw"></i> Información de la Mascota</h5>
+                        <h5 class="mb-0"><i class="fas fa-paw"></i> Información de la Mascota</h5>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <strong>Mascota:</strong> <span id="infoNombre"></span>
+                        <div class="row text-center text-md-start">
+                            <div class="col-md-3 mb-2">
+                                <strong>Mascota:</strong> <span id="infoNombre" class="fs-5"></span>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 mb-2">
                                 <strong>Raza:</strong> <span id="infoRaza"></span>
                             </div>
-                            <div class="col-md-2">
-                                <strong>Edad:</strong> <span id="infoEdad"></span>
+                            <div class="col-md-2 mb-2">
+                                <strong>Color:</strong> <span id="infoColor"></span>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 mb-2">
                                 <strong>Sexo:</strong> <span id="infoSexo"></span>
                             </div>
-                            <div class="col-md-3">
-                                <strong>Encargado:</strong> <span id="infoEncargado"></span>
+                            <div class="col-md-3 mb-2">
+                                <strong>Dueño:</strong> <span id="infoEncargado"></span>
                             </div>
                         </div>
                     </div>
@@ -86,68 +71,42 @@
             </div>
         </div>
 
-        <!-- SECCIÓN 3: Historial Previo -->
-        <div id="historialPrevio" class="row mb-4" style="display: none;">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header bg-warning text-dark">
-                        <h5><i class="fas fa-history"></i> Últimas Consultas</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="listaHistorial">
-                            <!-- Aquí se cargará el historial via AJAX -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- SECCIÓN 4: Formulario de Consulta Actual -->
         <div id="formularioConsulta" class="row mb-4" style="display: none;">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card shadow-sm border-success">
                     <div class="card-header bg-success text-white">
-                        <h5><i class="fas fa-notes-medical"></i> Nueva Consulta</h5>
+                        <h5 class="mb-0"><i class="fas fa-user-md"></i> Nueva Consulta Médica</h5>
                     </div>
                     <div class="card-body">
                         <form id="formConsulta">
                             <input type="hidden" id="idexpediente" name="idexpediente">
-                            <input type="hidden" id="idmascota" name="idmascota">
+                            <!-- Id de usuario quemado, cambiar al momento de usarlo con session -->
+                            <input type="hidden" id="idusuario" name="idusuario" value="1"> 
                             
                             <div class="row">
-                                <!-- Columna Izquierda: Datos Básicos -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="peso" class="required">Peso (kg):</label>
-                                        <input type="number" class="form-control" id="peso" name="peso" 
-                                               step="0.1" min="0" required>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="fecha" class="form-label required">Fecha</label>
+                                        <input type="datetime-local" class="form-control" id="fecha" name="fecha" required>
                                     </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="altura" class="required">Altura (cm):</label>
-                                        <input type="number" class="form-control" id="altura" name="altura" 
-                                               step="0.1" min="0" required>
+                                    <div class="mb-3">
+                                        <label for="peso" class="form-label required">Peso (lb/kg)</label>
+                                        <input type="number" class="form-control" id="peso" name="peso" step="0.01" required>
                                     </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="fecha" class="required">Fecha de Consulta:</label>
-                                        <input type="datetime-local" class="form-control" id="fecha" name="fecha" 
-                                               value="<?php echo date('Y-m-d\TH:i'); ?>" required>
+                                    <div class="mb-3">
+                                        <label for="altura" class="form-label required">Altura (cm)</label>
+                                        <input type="number" class="form-control" id="altura" name="altura" step="0.01" required>
                                     </div>
                                 </div>
                                 
-                                <!-- Columna Derecha: Observaciones -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="resumen" class="required">Resumen / Observaciones:</label>
-                                        <textarea class="form-control" id="resumen" name="resumen" 
-                                                  rows="4" placeholder="Observaciones generales de la consulta..." required></textarea>
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="resumen" class="form-label required">Resumen / Motivo</label>
+                                        <textarea class="form-control" id="resumen" name="resumen" rows="3" required></textarea>
                                     </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="diagnostico" class="required">Diagnóstico:</label>
-                                        <textarea class="form-control" id="diagnostico" name="diagnostico" 
-                                                  rows="4" placeholder="Diagnóstico médico..." required></textarea>
+                                    <div class="mb-3">
+                                        <label for="diagnostico" class="form-label required">Diagnóstico</label>
+                                        <textarea class="form-control" id="diagnostico" name="diagnostico" rows="3" required></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -157,98 +116,40 @@
             </div>
         </div>
 
-        <!-- SECCIÓN 5: Recetas Relacionadas -->
-        <div id="seccionRecetas" class="row mb-4" style="display: none;">
+        <div id="historialPrevio" class="row mb-4" style="display: none;">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card shadow-sm">
                     <div class="card-header bg-secondary text-white">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5><i class="fas fa-prescription-bottle-alt"></i> Recetas</h5>
-                            <button type="button" class="btn btn-light btn-sm" onclick="abrirModalReceta()">
-                                <i class="fas fa-plus"></i> Nueva Receta
-                            </button>
-                        </div>
+                        <h5 class="mb-0"><i class="fas fa-history"></i> Historial Clínico</h5>
                     </div>
-                    <div class="card-body">
-                        <div id="listaRecetas">
-                            <p class="text-muted">No hay recetas registradas para esta consulta.</p>
-                        </div>
+                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                        <div id="listaHistorial">Cargando...</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN 6: Botones de Acción -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary" onclick="volver()">
-                        <i class="fas fa-arrow-left"></i> Volver
-                    </button>
-                    
-                    <div>
-                        <button type="button" class="btn btn-info mr-2" onclick="abrirModalReceta()">
-                            <i class="fas fa-prescription-bottle-alt"></i> Agregar Receta
-                        </button>
-                        
-                        <button type="button" class="btn btn-success" onclick="guardarConsulta()">
-                            <i class="fas fa-save"></i> Guardar Consulta
-                        </button>
-                    </div>
-                </div>
+        <div class="row mb-5">
+            <div class="col-12 d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" onclick="location.reload()">
+                    <i class="fas fa-arrow-left"></i> Cancelar / Nuevo
+                </button>
+                <button type="button" class="btn btn-lg btn-success" id="btnGuardar" onclick="guardarConsulta()" style="display: none;">
+                    <i class="fas fa-save"></i> Guardar Consulta
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal para Recetas -->
-    <div class="modal fade" id="modalReceta" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">Agregar Nueva Receta</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="formReceta">
-                        <input type="hidden" id="receta_idexpedientedetalle" name="idexpedientedetalle">
-                        
-                        <div class="form-group">
-                            <label for="receta_fecha" class="required">Fecha:</label>
-                            <input type="datetime-local" class="form-control" id="receta_fecha" name="fecha" 
-                                   value="<?php echo date('Y-m-d\TH:i'); ?>" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="receta_descripcion" class="required">Descripción:</label>
-                            <textarea class="form-control" id="receta_descripcion" name="descripcion" 
-                                      rows="4" placeholder="Descripción de la receta..." required></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="receta_dosis" class="required">Dosis:</label>
-                            <textarea class="form-control" id="receta_dosis" name="dosis" 
-                                      rows="3" placeholder="Indicaciones de dosis..." required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="guardarReceta()">Guardar Receta</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <?php // include '../includes/footer.php'; ?>
-    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        let expedienteDetalleId = null;
-
         $(document).ready(function() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            $('#fecha').val(now.toISOString().slice(0, 16));
+
             $('#formBuscarExpediente').submit(function(e) {
                 e.preventDefault();
                 buscarExpediente();
@@ -256,188 +157,102 @@
         });
 
         function buscarExpediente() {
-            const busqueda = $('#busqueda').val();
-            
-            if (busqueda.trim() === '') {
-                alert('Por favor ingrese un término de búsqueda');
-                return;
-            }
-            
+            const busqueda = $('#busqueda').val().trim();
+            if (!busqueda) return alert('Escribe algo para buscar');
+
             $.ajax({
-                url: '../controller/ConsultaController.php?action=buscarExpediente',
+                url: '../../controller/ConsultaController.php?action=buscar',
                 type: 'POST',
                 data: { busqueda: busqueda },
                 dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        mostrarInformacionExpediente(response.data);
-                        cargarHistorial(response.data.idmascota);
+                success: function(res) {
+                    if (res.success) {
+                        mostrarDatos(res.data);
+                        cargarHistorial(res.data.idexpediente);
                     } else {
-                        alert('Expediente no encontrado: ' + response.message);
-                        ocultarSecciones();
+                        alert(res.message);
+                        ocultarTodo();
                     }
                 },
-                error: function() {
-                    alert('Error al buscar expediente');
+                error: function(e) {
+                    console.error(e);
+                    alert("Error de conexión con el servidor");
                 }
             });
         }
 
-        function mostrarInformacionExpediente(data) {
-            // Mostrar secciones
-            $('#infoExpediente, #historialPrevio, #formularioConsulta, #seccionRecetas').show();
-            
-            // Llenar información
+        function mostrarDatos(data) {
             $('#infoNombre').text(data.nombre_mascota);
             $('#infoRaza').text(data.raza);
-            $('#infoEdad').text(calcularEdad(data.fechanacimiento));
+            $('#infoColor').text(data.color || 'No especificado');
             $('#infoSexo').text(data.sexo);
-            $('#infoEncargado').text(data.encargado_nombre + ' ' + data.encargado_apellido);
+            $('#infoEncargado').text(data.encargado_nombre + ' ' + (data.encargado_apellido || ''));
+            
             $('#idexpediente').val(data.idexpediente);
-            $('#idmascota').val(data.idmascota);
+
+            $('#infoExpediente, #formularioConsulta, #historialPrevio, #btnGuardar').fadeIn();
         }
 
-        function cargarHistorial(idMascota) {
+        function cargarHistorial(idExpediente) {
             $.ajax({
-                url: '../controller/ConsultaController.php?action=obtenerHistorial',
+                url: '../../controller/ConsultaController.php?action=historial',
                 type: 'POST',
-                data: { idmascota: idMascota },
+                data: { idexpediente: idExpediente },
                 dataType: 'json',
-                success: function(historial) {
-                    mostrarHistorial(historial);
+                success: function(res) {
+                    let html = '';
+                    if (res.length > 0) {
+                        res.forEach(item => {
+                            html += `
+                                <div class="historial-item">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>Fecha: ${item.fecha}</strong>
+                                        <span class="badge bg-primary">${item.veterinario || 'Vet'}</span>
+                                    </div>
+                                    <p class="mb-1"><strong>Diagnóstico:</strong> ${item.diagnostico}</p>
+                                    <small class="text-muted">Peso: ${item.peso} | Altura: ${item.altura}</small>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html = '<p class="text-muted text-center">Esta mascota no tiene consultas previas.</p>';
+                    }
+                    $('#listaHistorial').html(html);
                 }
             });
-        }
-
-        function mostrarHistorial(historial) {
-            const listaHistorial = $('#listaHistorial');
-            
-            if (historial.length === 0) {
-                listaHistorial.html('<p class="text-muted">No hay consultas previas registradas.</p>');
-                return;
-            }
-            
-            let html = '';
-            historial.forEach(consulta => {
-                html += `
-                    <div class="historial-item">
-                        <strong>Fecha:</strong> ${formatFecha(consulta.fecha)}<br>
-                        <strong>Veterinario:</strong> ${consulta.veterinario}<br>
-                        <strong>Peso:</strong> ${consulta.peso} kg | <strong>Altura:</strong> ${consulta.altura} cm<br>
-                        <strong>Resumen:</strong> ${consulta.resumen}<br>
-                        <strong>Diagnóstico:</strong> ${consulta.diagnostico}
-                    </div>
-                `;
-            });
-            
-            listaHistorial.html(html);
         }
 
         function guardarConsulta() {
-            if (!validarFormularioConsulta()) {
-                return;
+            // Validar manual
+            if(!$('#peso').val() || !$('#diagnostico').val()) {
+                return alert("Llena al menos Peso y Diagnóstico");
             }
-            
+
             const formData = new FormData(document.getElementById('formConsulta'));
-            
+
             $.ajax({
-                url: '../controller/ConsultaController.php?action=guardarConsulta',
+                url: '../../controller/ConsultaController.php?action=guardar',
                 type: 'POST',
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {
-                    if (response.success) {
-                        alert('Consulta guardada exitosamente');
-                        expedienteDetalleId = response.id;
-                        $('#receta_idexpedientedetalle').val(response.id);
-                        // Opcional: limpiar formulario o redirigir
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        alert("¡Consulta Guardada con Éxito!");
+                        location.reload();
                     } else {
-                        alert('Error al guardar: ' + response.message);
+                        alert("Error al guardar: " + res.message);
                     }
                 },
                 error: function() {
-                    alert('Error al guardar la consulta');
+                    alert("Error fatal al guardar");
                 }
             });
         }
 
-        function abrirModalReceta() {
-            if (!expedienteDetalleId) {
-                alert('Primero debe guardar la consulta antes de agregar recetas');
-                return;
-            }
-            
-            $('#modalReceta').modal('show');
-        }
-
-        function guardarReceta() {
-            const formData = new FormData(document.getElementById('formReceta'));
-            
-            $.ajax({
-                url: '../controller/ConsultaController.php?action=agregarReceta',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    if (response.success) {
-                        alert('Receta guardada exitosamente');
-                        $('#modalReceta').modal('hide');
-                        // Limpiar formulario de receta
-                        $('#formReceta')[0].reset();
-                        // Actualizar lista de recetas
-                        // cargarRecetas();
-                    } else {
-                        alert('Error al guardar receta: ' + response.message);
-                    }
-                }
-            });
-        }
-
-        function validarFormularioConsulta() {
-            const peso = $('#peso').val();
-            const altura = $('#altura').val();
-            const resumen = $('#resumen').val();
-            const diagnostico = $('#diagnostico').val();
-            
-            if (!peso || !altura || !resumen || !diagnostico) {
-                alert('Por favor complete todos los campos requeridos');
-                return false;
-            }
-            
-            return true;
-        }
-
-        function calcularEdad(fechaNacimiento) {
-            const nacimiento = new Date(fechaNacimiento);
-            const hoy = new Date();
-            let años = hoy.getFullYear() - nacimiento.getFullYear();
-            let meses = hoy.getMonth() - nacimiento.getMonth();
-            
-            if (meses < 0) {
-                años--;
-                meses += 12;
-            }
-            
-            if (años > 0) {
-                return años + ' año' + (años > 1 ? 's' : '');
-            } else {
-                return meses + ' mes' + (meses > 1 ? 'es' : '');
-            }
-        }
-
-        function formatFecha(fechaStr) {
-            const fecha = new Date(fechaStr);
-            return fecha.toLocaleDateString('es-ES') + ' ' + fecha.toLocaleTimeString('es-ES');
-        }
-
-        function ocultarSecciones() {
-            $('#infoExpediente, #historialPrevio, #formularioConsulta, #seccionRecetas').hide();
-        }
-
-        function volver() {
-            window.history.back();
+        function ocultarTodo() {
+            $('#infoExpediente, #formularioConsulta, #historialPrevio, #btnGuardar').hide();
         }
     </script>
 </body>

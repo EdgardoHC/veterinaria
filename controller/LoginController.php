@@ -11,7 +11,6 @@ if (isset($_POST['accion']) && $_POST['accion'] === "login") {
     $row = $dao->buscarPorEmailOApodo($usuario);
 
     if ($row && password_verify($pwd, $row['pwd'])) {
-        // Guardamos datos en la sesión
         $_SESSION['usuario'] = [
             "id" => $row['idUsuario'],
             "nombre" => $row['nombre'],

@@ -1,19 +1,21 @@
 <?php
 require_once "../model/MascotaDAO.php";
 
-class MascotaController
-{
-    public function listarJson()
-    {
-        header("Content-Type: application/json; charset=utf-8");
-
-        $dao = new MascotaDAO();
-
+class MascotaController {
+    public function listarJson() {
+        header('Content-Type: application/json');
         try {
-            $lista = $dao->listarMascotas();
-            echo json_encode($lista, JSON_UNESCAPED_UNICODE);
+            $dao = new MascotaDAO();
+            $datos = $dao->listarMascotas();
+            echo json_encode($datos);
         } catch (Exception $e) {
             echo json_encode([]);
         }
     }
 }
+
+if (isset($_GET['op']) && $_GET['op'] === 'listar_json') {
+    $c = new MascotaController();
+    $c->listarJson();
+}
+?>

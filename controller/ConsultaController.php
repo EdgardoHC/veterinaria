@@ -1,64 +1,49 @@
 <?php
 require_once __DIR__ . '/../model/ExpedienteDAO.php';
-require_once __DIR__ . '/../model/MascotaDAO.php';
-require_once __DIR__ . '/../model/UsuarioDAO.php';
 
-class ConsultaController {
-    private $expedienteDAO;
-    private $mascotaDAO;
-    private $recetaDAO;
-    
-    public function __construct() {
-        $this->expedienteDAO = new ExpedienteDAO();
-        $this->mascotaDAO = new MascotaDAO();
-        $this->recetaDAO = new RecetaDAO();
-    }
-    
-    public function mostrarIngresoConsulta() {
-        require_once '../view/consultas/ingresar_consulta.php';
-    }
-    
-    public function buscarExpediente() {
+header('Content-Type: application/json');
+
+$action = $_GET['action'] ?? '';
+
+$dao = new ExpedienteDAO();
+
+switch ($action) {
+    case 'buscar':
         $busqueda = $_POST['busqueda'] ?? '';
-        $resultado = $this->expedienteDAO->buscarExpediente($busqueda);
+        if (!$busqueda) {
+            echo json_encode(['success' => false, 'message' => 'Campo vacío']);
+            exit;
+        }
+        
+        // Llamamos a la función buscar del DAO
+        $resultado = $dao->buscarExpediente($busqueda);
         echo json_encode($resultado);
-    }
-    
-    public function guardarConsulta() {
-        $datos = [
-            'fecha' => $_POST['fecha'],
-            'resumen' => $_POST['resumen'],
-            'diagnostico' => $_POST['diagnostico'],
-            'idexpediente' => $_POST['idexpediente'],
-            'peso' => $_POST['peso'],
-            'altura' => $_POST['altura'],
-            'idusuario' => 1 
-        ];
-        $resultado = $this->expedienteDAO->guardarConsulta($datos);
-        echo json_encode($resultado);
-    }
-    
-    public function agregarReceta() {
-        $datos = [
-            'fecha' => $_POST['fecha'],
-            'descripcion' => $_POST['descripcion'],
-            'idexpedientedetalle' => $_POST['idexpedientedetalle'],
-            'dosis' => $_POST['dosis']
-        ];
-        $resultado = $this->recetaDAO->guardarReceta($datos);
-        echo json_encode($resultado);
-    }
-    
-    public function obtenerHistorial() {
-        $idMascota = $_POST['idmascota'] ?? '';
-        $historial = $this->expedienteDAO->obtenerHistorialMascota($idMascota);
+        break;
+
+    case 'historial':
+        $idExpediente = $_POST['idexpediente'] ?? 0;
+        $historial = $dao->obtenerHistorialMascota($idExpediente); // Ojo: puede que necesites buscar por idMascota
         echo json_encode($historial);
-    }
-    
-    public function obtenerRecetas() {
-        $idexpedientedetalle = $_POST['idexpedientedetalle'] ?? '';
-        $recetas = $this->recetaDAO->obtenerRecetasPorExpediente($idexpedientedetalle);
-        echo json_encode($recetas);
-    }
+        break;
+
+    case 'guardar':
+        // Recibir datos del formulario
+        $datos = [
+            'idexpediente' => $_POST['idexpediente'],
+            'fecha'        => $_POST['fecha'],
+            'peso'         => $_POST['peso'],
+            'altura'       => $_POST['altura'],
+            'resumen'      => $_POST['resumen'],
+            'diagnostico'  => $_POST['diagnostico'],
+            'idusuario'    => $_POST['idusuario'] ?? 1 // Por defecto 1 si no hay login
+        ];
+
+        $res = $dao->guardarConsulta($datos);
+        echo json_encode($res);
+        break;
+
+    default:
+        echo json_encode(['success' => false, 'message' => 'Acción no válida']);
+        break;
 }
 ?>

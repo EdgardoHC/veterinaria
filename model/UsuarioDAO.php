@@ -1,6 +1,6 @@
 <?php
-require_once "Conexion.php";
-require_once "Usuario.php";
+require_once __DIR__ . "/Conexion.php";
+require_once __DIR__ . "/Usuario.php";
 
 class UsuarioDAO
 {
@@ -14,7 +14,14 @@ class UsuarioDAO
     public function listar()
     {
         try {
-            $sql = "SELECT idUsuario, nombre, apellidos, email, apodo FROM usuarios";
+            $sql = "SELECT 
+                        idusuario as idUsuario, 
+                        nombrecompleto as nombre, 
+                        '' as apellidos,  
+                        correoelectronico as email, 
+                        nombreusuario as apodo 
+                    FROM usuarios";
+            
             $result = $this->conn->query($sql);
             return $result->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
@@ -23,17 +30,40 @@ class UsuarioDAO
         }
     }
 
+    public function listarVeterinarios() {
+        try {
+            // Esta funcion es para el Select del Expediente
+            $sql = "SELECT 
+                        idusuario as id, 
+                        nombrecompleto as nombre, 
+                        '' as apellidos 
+                    FROM usuarios";
+            
+            $result = $this->conn->query($sql);
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            error_log("Error al listar veterinarios: " . $e->getMessage());
+            return [];
+        }
+    }
+
     public function crear(Usuario $u)
     {
-        $sql = "INSERT INTO usuarios (nombre, apellidos, email, apodo, pwd) VALUES (?, ?, ?, ?, ?)";
+        // la BD requiere idempleado, idrol, etc. 
+        // estoy poniendo '1' y '1' por defecto para evitar el error, pero se debe revisar
+        $sql = "INSERT INTO usuarios (nombrecompleto, correoelectronico, nombreusuario, contrasena, idempleado, idrol, estado, fechacreacion, contrasenatemporal) 
+                VALUES (?, ?, ?, ?, 1, 1, 1, NOW(), '')";
 
         try {
             $stmt = $this->conn->prepare($sql);
             $hashed = password_hash($u->getPwd(), PASSWORD_DEFAULT);
+            
+            // Concatenamos nombre y apellido porque la BD solo tiene un campo
+            $nombreCompleto = $u->getNombre() . ' ' . $u->getApellidos();
+
             $stmt->bind_param(
-                "sssss",
-                $u->getNombre(),
-                $u->getApellidos(),
+                "ssss",
+                $nombreCompleto,
                 $u->getEmail(),
                 $u->getApodo(),
                 $hashed
@@ -48,14 +78,15 @@ class UsuarioDAO
 
     public function actualizar(Usuario $u)
     {
-        $sql = "UPDATE usuarios SET nombre = ?, apellidos = ?, email = ?, apodo = ? WHERE idUsuario = ?";
+        $sql = "UPDATE usuarios SET nombrecompleto = ?, correoelectronico = ?, nombreusuario = ? WHERE idusuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);
+            $nombreCompleto = $u->getNombre() . ' ' . $u->getApellidos();
+            
             $stmt->bind_param(
-                "ssssi",
-                $u->getNombre(),
-                $u->getApellidos(),
+                "sssi",
+                $nombreCompleto,
                 $u->getEmail(),
                 $u->getApodo(),
                 $u->getIdUsuario()
@@ -70,7 +101,7 @@ class UsuarioDAO
 
     public function eliminar($id)
     {
-        $sql = "DELETE FROM usuarios WHERE idUsuario = ?";
+        $sql = "DELETE FROM usuarios WHERE idusuario = ?";
 
         try {
             $stmt = $this->conn->prepare($sql);
@@ -85,7 +116,8 @@ class UsuarioDAO
 
     public function buscarPorEmailOApodo($usuario)
     {
-        $sql = "SELECT * FROM usuarios WHERE email = ? OR apodo = ? LIMIT 1";
+        $sql = "SELECT idusuario, nombrecompleto, nombreusuario, correoelectronico, contrasena 
+                FROM usuarios WHERE correoelectronico = ? OR nombreusuario = ? LIMIT 1";
 
         try {
             $stmt = $this->conn->prepare($sql);
@@ -98,21 +130,5 @@ class UsuarioDAO
             return null;
         }
     }
-
-    public function listarVeterinarios()
-    {
-        $sql = "SELECT u.idUsuario, u.nombre, u.apellidos 
-                FROM usuarios u
-                INNER JOIN puestodetrabajo p ON u.idPuesto = p.idPuesto
-                WHERE p.nombre = 'veterinario'
-                ORDER BY u.nombre ASC";
-
-        try {
-            $result = $this->conn->query($sql);
-            return $result->fetch_all(MYSQLI_ASSOC);
-        } catch (mysqli_sql_exception $e) {
-            error_log("Error al listar veterinarios: " . $e->getMessage());
-            return [];
-        }
-    }
 }
+?>

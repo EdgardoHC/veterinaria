@@ -1,25 +1,24 @@
 <?php
-require_once 'Conexion.php';
+require_once __DIR__ . '/Conexion.php';
 
 class MascotaDAO {
     private $conn;
-    
+
     public function __construct() {
-        $conexion = Conexion::getInstance();
-        $this->conn = $conexion->getConexion();  
+        $this->conn = Conexion::getInstance()->getConexion();
     }
 
     public function listarMascotas() {
-        $sql = "SELECT idMascota, nombre FROM mascota ORDER BY nombre ASC";
-
-        try {
-            $result = $this->conn->query($sql);
+        $sql = "SELECT idMascota as id, nombres FROM mascota ORDER BY nombres ASC";
+        
+        $result = $this->conn->query($sql);
+        if ($result) {
             return $result->fetch_all(MYSQLI_ASSOC);
-        } catch (mysqli_sql_exception $e) {
-            error_log("Error al listar mascotas: " . $e->getMessage());
-            return [];
         }
+        return [];
     }
+
+
     
     public function calcularEdad($fechaNacimiento) {
         $nacimiento = new DateTime($fechaNacimiento);
@@ -35,3 +34,4 @@ class MascotaDAO {
         }
     }
 }
+?>

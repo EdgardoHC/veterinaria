@@ -1,19 +1,21 @@
 <?php
-require_once "../model/UsuarioDAO.php";
+require_once __DIR__ . '/../model/UsuarioDAO.php';
 
-class VeterinarioController
-{
-    public function listarJson()
-    {
-        header("Content-Type: application/json; charset=utf-8");
-
-        $dao = new UsuarioDAO();
-
+class UsuarioController {
+    public function listarVeterinariosJson() {
+        header('Content-Type: application/json');
         try {
-            $lista = $dao->listarVeterinarios(); 
-            echo json_encode($lista, JSON_UNESCAPED_UNICODE);
+            $dao = new UsuarioDAO();
+            $datos = $dao->listarVeterinarios(); 
+            echo json_encode($datos);
         } catch (Exception $e) {
             echo json_encode([]);
         }
     }
 }
+
+if (isset($_GET['op']) && $_GET['op'] === 'listar_veterinarios_json') {
+    $c = new UsuarioController();
+    $c->listarVeterinariosJson();
+}
+?>
