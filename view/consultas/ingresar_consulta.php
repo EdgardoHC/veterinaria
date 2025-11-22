@@ -22,8 +22,8 @@
     </style>
 </head>
 <body>
-    <?php // include '../includes/header.php'; ?>
-    
+    <?php include __DIR__ . '/../components/navbar.php'; ?>
+
     <div class="container-fluid mt-4">
         <!-- SECCIÓN 1: Buscador de Expediente -->
         <div class="row mb-4">

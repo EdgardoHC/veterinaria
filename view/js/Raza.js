@@ -1,4 +1,20 @@
 $(document).ready(function () {
+    function mostrarAlerta(tipo, mensaje, tiempo = 4000) {
+        const $contenedor = $('#alertContainer');
+        if ($contenedor.length === 0) return;
+        const id = 'alert-' + Date.now();
+        const $alert = $(`<div id="${id}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">${mensaje}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+        $contenedor.append($alert);
+        if (tiempo > 0) {
+            setTimeout(function() {
+                const el = document.getElementById(id);
+                if (el) {
+                    const inst = bootstrap.Alert.getOrCreateInstance(el);
+                    inst.close();
+                }
+            }, tiempo);
+        }
+    }
     cargarRazas();
 
     $("#frmRaza").submit(function (e) {
@@ -10,7 +26,7 @@ $(document).ready(function () {
             function (res) {
                 if (res.ok) {
                     console.log(res.ok);
-                    alert("Raza " + (accion === "crear" ? "guardado" : "actualizado") + " correctamente");
+                    mostrarAlerta('success', "Raza " + (accion === "crear" ? "guardado" : "actualizado") + " correctamente");
 
                     $("#modalNuevaRaza").modal("hide");
                     $("#frmRaza")[0].reset();
@@ -20,7 +36,7 @@ $(document).ready(function () {
 
                     cargarRazas();
                 } else {
-                    alert("Ocurrió un error al " + (accion === "crear" ? "guardar" : "actualizar") + " la raza");
+                    mostrarAlerta('danger', "Ocurrió un error al " + (accion === "crear" ? "guardar" : "actualizar") + " la raza");
                 }
             },
             "json"
@@ -87,10 +103,10 @@ function eliminarRaza(id) {
             function (res) {
                 if (res.ok) {
                     
-                    alert("Raza eliminada correctamente");
+                    mostrarAlerta('success', "Raza eliminada correctamente");
                     cargarRazas();
                 } else {
-                    alert("No se pudo eliminar la raza");
+                    mostrarAlerta('danger', "No se pudo eliminar la raza");
                 }
             },
             "json"

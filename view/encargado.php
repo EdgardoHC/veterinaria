@@ -13,10 +13,11 @@
     <script src="view/js/Encargado.js"></script>
 </head>
 
-<body class="bg-light">
-    <?php include 'components/navbar.php'; ?>
+    <body class="bg-light">
+        <?php include 'components/navbar.php'; ?>
 
     <div class="container py-4">
+        <div id="alertContainer" class="mb-3"></div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2><i class="fas fa-user-tie text-success me-2"></i>Encargados</h2>
             <button class="btn btn-success" onclick="nuevoEncargado()">

@@ -1,4 +1,20 @@
 $(document).ready(function () {
+    function mostrarAlerta(tipo, mensaje, tiempo = 4000) {
+        const $contenedor = $('#alertContainer');
+        if ($contenedor.length === 0) return;
+        const id = 'alert-' + Date.now();
+        const $alert = $(`<div id="${id}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">${mensaje}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+        $contenedor.append($alert);
+        if (tiempo > 0) {
+            setTimeout(function() {
+                const el = document.getElementById(id);
+                if (el) {
+                    const inst = bootstrap.Alert.getOrCreateInstance(el);
+                    inst.close();
+                }
+            }, tiempo);
+        }
+    }
     cargarEncargados();
 
     $("#frmEncargado").submit(function (e) {
@@ -11,11 +27,7 @@ $(document).ready(function () {
             $(this).serialize() + "&accion=" + accion,
             function (res) {
                 if (res.ok) {
-                    alert(
-                        "Encargado " +
-                        (accion === "crear" ? "guardado" : "actualizado") +
-                        " correctamente"
-                    );
+                    mostrarAlerta('success', "Encargado " + (accion === "crear" ? "guardado" : "actualizado") + " correctamente");
 
                     $("#modalEncargado").modal("hide");
                     $("#frmEncargado")[0].reset();
@@ -26,11 +38,7 @@ $(document).ready(function () {
 
                     cargarEncargados();
                 } else {
-                    alert(
-                        "Ocurrió un error al " +
-                        (accion === "crear" ? "guardar" : "actualizar") +
-                        " el encargado"
-                    );
+                    mostrarAlerta('danger', "Ocurrió un error al " + (accion === "crear" ? "guardar" : "actualizar") + " el encargado");
                 }
             },
             "json"
@@ -108,10 +116,10 @@ function eliminarEncargado(id) {
             { accion: "eliminar", idencargado: id },
             function (res) {
                 if (res.ok) {
-                    alert("Encargado eliminado correctamente");
+                    mostrarAlerta('success', "Encargado eliminado correctamente");
                     cargarEncargados();
                 } else {
-                    alert("No se pudo eliminar el encargado");
+                    mostrarAlerta('danger', "No se pudo eliminar el encargado");
                 }
             },
             "json"

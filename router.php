@@ -12,6 +12,7 @@ $routes = [
     "usuarios"  => "view/vUsuario.php",
     "tipoControlMedico" => "view/tipo_control_medico.php",
     "reporteUsuarios" => "reportes/reporteUsuarios.php",
+    "ingresarConsulta" => "view/consultas/ingresar_consulta.php",
     "logout"    => "logout",
 ];
 

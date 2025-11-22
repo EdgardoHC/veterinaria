@@ -21,7 +21,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
                 <li class="nav-item <?php echo ($page === 'home') ? 'active' : ''; ?>">
                     <a class="nav-link" href="index.php?page=home">Inicio</a>
                 </li>
-                <?php // if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] === "Administrador") { ?>
+                <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] === "Administrador") { ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="menu1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Gestión
@@ -31,7 +31,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
                         <li><a class="dropdown-item" href="index.php?page=encargado">Encargado</a></li>
                     </ul>
                 </li>
-                <?php // } ?>
+                <?php } ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="menu2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Salud y Veterinaria

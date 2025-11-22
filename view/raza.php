@@ -13,15 +13,16 @@
     <script src="view/js/Raza.js"></script>
 </head>
 
-<body class="bg-light">
-    <?php include 'components/navbar.php'; ?>
+    <body class="bg-light">
+        <?php include 'components/navbar.php'; ?>
 
-    <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="fas fa-heartbeat text-danger me-2"></i>Razas</h2>
-            <button class="btn btn-primary" onclick="nuevaRaza()">
-                <i class="fas fa-plus"></i> Nuevo Raza
-            </button>
+        <div class="container py-4">
+            <div id="alertContainer" class="mb-3"></div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-heartbeat text-danger me-2"></i>Razas</h2>
+                <button class="btn btn-primary" onclick="nuevaRaza()">
+                    <i class="fas fa-plus"></i> Nuevo Raza
+                </button>
         </div>
 
         <!-- Tabla -->

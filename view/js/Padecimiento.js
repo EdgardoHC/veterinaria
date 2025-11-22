@@ -1,4 +1,20 @@
 $(document).ready(function () {
+    function mostrarAlerta(tipo, mensaje, tiempo = 4000) {
+        const $contenedor = $('#alertContainer');
+        if ($contenedor.length === 0) return;
+        const id = 'alert-' + Date.now();
+        const $alert = $(`<div id="${id}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">${mensaje}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`);
+        $contenedor.append($alert);
+        if (tiempo > 0) {
+            setTimeout(function() {
+                const el = document.getElementById(id);
+                if (el) {
+                    const inst = bootstrap.Alert.getOrCreateInstance(el);
+                    inst.close();
+                }
+            }, tiempo);
+        }
+    }
     cargarPadecimientos();
 
     $("#frmPadecimiento").submit(function (e) {
@@ -11,7 +27,7 @@ $(document).ready(function () {
                 console.log(res);                
                 if (res.ok) {   
                     console.log(res.ok);             
-                    alert("Padecimiento " + (accion === "crear" ? "guardado" : "actualizado") + " correctamente");
+                    mostrarAlerta('success', "Padecimiento " + (accion === "crear" ? "guardado" : "actualizado") + " correctamente");
 
                     $("#modalNuevoPadecimiento").modal("hide");
                     $("#frmPadecimiento")[0].reset();
@@ -21,7 +37,7 @@ $(document).ready(function () {
 
                     cargarPadecimientos();
                 } else {
-                    alert("Ocurrió un error al " + (accion === "crear" ? "guardar" : "actualizar") + " el padecimiento");
+                    mostrarAlerta('danger', "Ocurrió un error al " + (accion === "crear" ? "guardar" : "actualizar") + " el padecimiento");
                 }
             },
             "json"
@@ -87,10 +103,10 @@ function eliminarPadecimiento(id) {
             { accion: "eliminar", idPadecimiento: id },
             function (res) {
                 if (res.ok) {
-                    alert("Padecimiento eliminado correctamente");
+                    mostrarAlerta('success', "Padecimiento eliminado correctamente");
                     cargarPadecimientos();
                 } else {
-                    alert("No se pudo eliminar el padecimiento");
+                    mostrarAlerta('danger', "No se pudo eliminar el padecimiento");
                 }
             },
             "json"
