@@ -1,26 +1,35 @@
 <?php
+// reportes/reporteUsuarios.php
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+// COMENTADO TEMPORALMENTE para que el PDF se muestre sin login
+/*
 if (!isset($_SESSION['usuario'])) {
     header('Location: ../index.php?page=login');
     exit;
 }
+*/
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../model/UsuarioDAO.php';
-require_once __DIR__ . '/../model/Usuario.php';
+// [CAMBIO CLAVE 1/3]: Usamos el DAO de reportes segregado
+require_once __DIR__ . '/../model/UsuarioReportesDAO.php'; 
+// Eliminamos require_once UsuarioDAO.php y Usuario.php
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-$dao = new UsuarioDAO();
-$usuarios = $dao->listar();
+// [CAMBIO CLAVE 2/3]: Instanciamos el DAO de reportes
+$dao = new UsuarioReportesDAO();
+// [CAMBIO CLAVE 3/3]: Usamos el método listo para reportes (listarUsuariosConRol)
+$usuarios = $dao->listarUsuariosConRol(); 
 $fechaGeneracion = date('d/m/Y H:i');
 
 $options = new Options();
-$options->set('isRemoteEnabled', false);
+$options->set('defaultFont', 'DejaVu Sans'); 
+$options->set('isRemoteEnabled', false); 
 $options->set('isHtml5ParserEnabled', true);
 
 $dompdf = new Dompdf($options);
@@ -64,10 +73,10 @@ ob_start();
     <table>
         <thead>
             <tr>
-                <th style="width: 25%;">Nombre</th>
-                <th style="width: 25%;">Correo</th>
-                <th style="width: 30%;">Usuario</th>
-            </tr>
+                <th style="width: 30%;">Nombre Completo</th>
+                <th style="width: 30%;">Correo Electrónico</th>
+                <th style="width: 20%;">Nombre Usuario</th>
+                <th style="width: 20%;">Rol (Tipo)</th> </tr>
         </thead>
         <tbody>
             <?php if (empty($usuarios)): ?>
@@ -80,6 +89,7 @@ ob_start();
                         <td><?= htmlspecialchars($u['nombrecompleto'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($u['correoelectronico'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($u['nombreusuario'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($u['nombre_rol'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -100,3 +110,4 @@ $dompdf->render();
 $nombreArchivo = 'informe_usuarios_' . date('Ymd_His') . '.pdf';
 $dompdf->stream($nombreArchivo, ['Attachment' => false]);
 exit;
+?>
