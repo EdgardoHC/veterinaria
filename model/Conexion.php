@@ -6,10 +6,10 @@ class Conexion
 
     private function __construct()
     {
-        $host = 'localhost';
-        $user = 'root';
-        $pass = 'itca123';
-        $db = 'veterinaria';
+        $host = "localhost";
+        $db = "veterinaria";
+        $user = "root";
+        $pass = "";
 
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
