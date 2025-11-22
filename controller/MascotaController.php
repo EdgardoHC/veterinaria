@@ -2,6 +2,7 @@
 require_once "../model/MascotaDAO.php";
 
 class MascotaController {
+    //listar mascotas en formato JSON
     public function listarJson() {
         header('Content-Type: application/json');
         try {

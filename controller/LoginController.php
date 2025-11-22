@@ -4,6 +4,7 @@ require_once "../model/UsuarioDAO.php";
 
 $dao = new UsuarioDAO();
 
+// Manejo de login
 if (isset($_POST['accion']) && $_POST['accion'] === "login") {
     $usuario = $_POST['usuario'];
     $pwd = $_POST['pwd'];
