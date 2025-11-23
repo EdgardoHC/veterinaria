@@ -31,22 +31,31 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
                         <li><a class="dropdown-item" href="index.php?page=encargado">Encargado</a></li>
                     </ul>
                 </li>
-                <?php } ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="menu2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Salud y Veterinaria
+                        Recursos Humanos
                     </a>
                     <ul class="dropdown-menu animated-dropdown" aria-labelledby="menu2">
+                        <li><a class="dropdown-item" href="index.php?page=areaTrabajo">Área de Trabajo</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=puestoTrabajo">Puesto de Trabajo</a></li>
+                    </ul>
+                </li>
+                <?php } ?>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="menu3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Salud y Veterinaria
+                    </a>
+                    <ul class="dropdown-menu animated-dropdown" aria-labelledby="menu3">
                         <li><a class="dropdown-item" href="index.php?page=padecimientos">Padecimientos</a></li>
                         <li><a class="dropdown-item" href="index.php?page=vacunas">Vacunación</a></li>
                         <li><a class="dropdown-item" href="index.php?page=tipoControlMedico">Tipo control médico</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="menu3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="menu4" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Clasificación/Tipos
                     </a>
-                    <ul class="dropdown-menu animated-dropdown" aria-labelledby="menu3">
+                    <ul class="dropdown-menu animated-dropdown" aria-labelledby="mnenu4">
                         <li><a class="dropdown-item" href="index.php?page=raza">Raza</a></li>
                         <li><a class="dropdown-item" href="#">Clase</a></li>
                     </ul>
