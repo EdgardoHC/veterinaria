@@ -15,7 +15,8 @@
 </head>
 
 <body>
-
+    <?php include 'view/components/navbar.php'; ?>
+    
     <div class="container-fluid">
         <h3>Gestion de usuarios</h3>
         <button class="btn btn-sm btn-primary" onclick="nuevoUsuario()">Nuevo usuario</button>
