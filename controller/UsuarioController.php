@@ -1,8 +1,21 @@
 <?php
-require_once "../model/UsuarioDAO.php";
-require_once "../model/Usuario.php";
+require_once __DIR__ . "/../util/Seguridad.php";
+require_once __DIR__ . "/../model/UsuarioDAO.php";
+require_once __DIR__ . "/../model/Usuario.php";
+require_once __DIR__ . "/../service/AuditoriaService.php";
+require_once __DIR__ . "/../model/Auditoria.php";
 
 header("Content-Type: application/json; charset=utf-8");
+
+// Iniciar sesión segura
+Seguridad::iniciarSesionSegura();
+
+// Verificar autenticación
+if (!isset($_SESSION['usuario'])) {
+    http_response_code(401);
+    echo json_encode(["ok" => false, "message" => "No autorizado"]);
+    exit;
+}
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(405);
@@ -18,30 +31,41 @@ if ($accion === "") {
 }
 
 $dao = new UsuarioDAO();
+$auditoriaService = new AuditoriaService();
+$idUsuarioActual = $_SESSION['usuario']['id'];
 
 try {
     switch ($accion) {
         case "listar":
             $usuarios = $dao->listar();
+            
+            // Registrar consulta en auditoría
+            $auditoriaService->registrarAccion(
+                $idUsuarioActual,
+                Auditoria::ACCION_CONSULTAR,
+                'usuarios',
+                null
+            );
+            
             echo json_encode(["ok" => true, "data" => $usuarios]);
             break;
 
         case "crear":
-            $nombre = trim($_POST["nombre"] ?? "");
-            $apellidos = trim($_POST["apellidos"] ?? "");
-            $email = strtolower(trim($_POST["email"] ?? ""));
-            $apodo = trim($_POST["apodo"] ?? "");
+            $nombre = Seguridad::sanitizarEntrada(trim($_POST["nombre"] ?? ""));
+            $apellidos = Seguridad::sanitizarEntrada(trim($_POST["apellidos"] ?? ""));
+            $email = Seguridad::validarEmail($_POST["email"] ?? "");
+            $apodo = Seguridad::sanitizarEntrada(trim($_POST["apodo"] ?? ""));
             $pwd = $_POST["pwd"] ?? "";
 
-            if ($nombre === "" || $apellidos === "" || $email === "" || $apodo === "" || $pwd === "") {
+            if ($nombre === "" || $apellidos === "" || $email === false || $apodo === "" || $pwd === "") {
                 http_response_code(400);
                 echo json_encode(["ok" => false, "message" => "Todos los campos son obligatorios"]);
                 break;
             }
 
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            if (!Seguridad::validarPassword($pwd)) {
                 http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Email invalido"]);
+                echo json_encode(["ok" => false, "message" => "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número"]);
                 break;
             }
 
@@ -54,6 +78,20 @@ try {
 
             $resultado = $dao->crear($usuario);
             if ($resultado) {
+                // Obtener el ID del usuario creado
+                $usuarioCreado = $dao->buscarPorEmailOApodo($email);
+                $idUsuarioCreado = $usuarioCreado['idUsuario'] ?? null;
+                
+                // Registrar en auditoría
+                $auditoriaService->registrarAccion(
+                    $idUsuarioActual,
+                    Auditoria::ACCION_CREAR,
+                    'usuarios',
+                    $idUsuarioCreado,
+                    null,
+                    ['nombre' => $nombre, 'apellidos' => $apellidos, 'email' => $email, 'apodo' => $apodo]
+                );
+                
                 echo json_encode(["ok" => true, "message" => "Usuario creado"]);
             } else {
                 http_response_code(500);
@@ -63,21 +101,27 @@ try {
 
         case "actualizar":
             $id = filter_var($_POST["idUsuario"] ?? null, FILTER_VALIDATE_INT);
-            $nombre = trim($_POST["nombre"] ?? "");
-            $apellidos = trim($_POST["apellidos"] ?? "");
-            $email = strtolower(trim($_POST["email"] ?? ""));
-            $apodo = trim($_POST["apodo"] ?? "");
+            $nombre = Seguridad::sanitizarEntrada(trim($_POST["nombre"] ?? ""));
+            $apellidos = Seguridad::sanitizarEntrada(trim($_POST["apellidos"] ?? ""));
+            $email = Seguridad::validarEmail($_POST["email"] ?? "");
+            $apodo = Seguridad::sanitizarEntrada(trim($_POST["apodo"] ?? ""));
 
-            if (!$id || $nombre === "" || $apellidos === "" || $email === "" || $apodo === "") {
+            if (!$id || $nombre === "" || $apellidos === "" || $email === false || $apodo === "") {
                 http_response_code(400);
                 echo json_encode(["ok" => false, "message" => "Datos invalidos" ]);
                 break;
             }
 
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                http_response_code(400);
-                echo json_encode(["ok" => false, "message" => "Email invalido"]);
-                break;
+            // Obtener datos anteriores para auditoría
+            $usuarioAnterior = $dao->buscarPorEmailOApodo($email);
+            $datosAnteriores = null;
+            if ($usuarioAnterior) {
+                $datosAnteriores = [
+                    'nombre' => $usuarioAnterior['nombre'],
+                    'apellidos' => $usuarioAnterior['apellidos'],
+                    'email' => $usuarioAnterior['email'],
+                    'apodo' => $usuarioAnterior['apodo']
+                ];
             }
 
             $usuario = new Usuario();
@@ -89,6 +133,16 @@ try {
 
             $resultado = $dao->actualizar($usuario);
             if ($resultado) {
+                // Registrar en auditoría
+                $auditoriaService->registrarAccion(
+                    $idUsuarioActual,
+                    Auditoria::ACCION_ACTUALIZAR,
+                    'usuarios',
+                    $id,
+                    $datosAnteriores,
+                    ['nombre' => $nombre, 'apellidos' => $apellidos, 'email' => $email, 'apodo' => $apodo]
+                );
+                
                 echo json_encode(["ok" => true, "message" => "Usuario actualizado"]);
             } else {
                 http_response_code(500);
@@ -104,8 +158,38 @@ try {
                 break;
             }
 
+            // Obtener datos del usuario antes de eliminar para auditoría
+            $usuarios = $dao->listar();
+            $usuarioAEliminar = null;
+            foreach ($usuarios as $u) {
+                if ($u['idUsuario'] == $id) {
+                    $usuarioAEliminar = $u;
+                    break;
+                }
+            }
+
             $resultado = $dao->eliminar($id);
             if ($resultado) {
+                // Registrar en auditoría
+                $datosEliminados = null;
+                if ($usuarioAEliminar) {
+                    $datosEliminados = [
+                        'nombre' => $usuarioAEliminar['nombre'],
+                        'apellidos' => $usuarioAEliminar['apellidos'],
+                        'email' => $usuarioAEliminar['email'],
+                        'apodo' => $usuarioAEliminar['apodo']
+                    ];
+                }
+                
+                $auditoriaService->registrarAccion(
+                    $idUsuarioActual,
+                    Auditoria::ACCION_ELIMINAR,
+                    'usuarios',
+                    $id,
+                    $datosEliminados,
+                    null
+                );
+                
                 echo json_encode(["ok" => true, "message" => "Usuario eliminado"]);
             } else {
                 http_response_code(500);
