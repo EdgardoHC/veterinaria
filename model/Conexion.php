@@ -9,7 +9,7 @@ class Conexion
         $host = "localhost";
         $db = "veterinaria";
         $user = "root";
-        $pass = "";
+        $pass = "ITCA123";
 
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 

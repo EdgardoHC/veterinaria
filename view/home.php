@@ -53,12 +53,12 @@ $usuario = $_SESSION['usuario'];
             <p>Selecciona una de las siguientes opciones para comenzar a trabajar.</p>
         </div>
 
-        <!-- --- Tarjetas de Acceso Rápido (de ejemplos)--- -->
+        <!-- --- Tarjetas de Acceso Rápido --- -->
         <h2 class="text-center mb-4">Menú Principal</h2>
         <div class="row">
 
             <!-- Tarjeta 1: Gestionar Mascotas -->
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="col-12 col-md-6 col-lg-3 mb-4">
                 <div class="card h-100 text-center">
                     <div class="card-body">
                         <div class="card-icon mb-3">
@@ -70,9 +70,10 @@ $usuario = $_SESSION['usuario'];
                     </div>
                 </div>
             </div>
-             <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] === "Administrador") { ?>
+
+            <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] === "Administrador") { ?>
             <!-- Tarjeta 2: Gestión de Usuarios -->
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="col-12 col-md-6 col-lg-3 mb-4">
                 <div class="card h-100 text-center">
                     <div class="card-body">
                         <div class="card-icon mb-3">
@@ -85,8 +86,9 @@ $usuario = $_SESSION['usuario'];
                 </div>
             </div>
             <?php }?>
+
             <!-- Tarjeta 3: Agenda de Citas -->
-            <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="col-12 col-md-6 col-lg-3 mb-4">
                 <div class="card h-100 text-center">
                     <div class="card-body">
                         <div class="card-icon mb-3">
@@ -99,6 +101,19 @@ $usuario = $_SESSION['usuario'];
                 </div>
             </div>
 
+            <!-- Tarjeta 4: Reportes -->
+            <div class="col-12 col-md-6 col-lg-3 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="card-icon mb-3">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h5 class="card-title">Reportes</h5>
+                        <p class="card-text">Genera reportes estadísticos y consulta información del sistema.</p>
+                        <a href="index.php?page=dashboardReportes" class="btn btn-primary">Ir ahora</a>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </main>
@@ -107,7 +122,6 @@ $usuario = $_SESSION['usuario'];
     <footer class="text-center text-muted mt-5 mb-4">
         <p>&copy; <?php echo date("Y"); ?> Veterinaria. Todos los derechos reservados.</p>
     </footer>
-
 
     <!-- Scripts de JavaScript -->
     <script src="view/vendor/jquery3.7.1/jquery.min.js"></script>

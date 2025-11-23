@@ -10,6 +10,7 @@ $routes = [
     "home"      => "view/home.php",
     "usuarios"  => "view/vUsuario.php",
     "reporteUsuarios" => "reportes/reporteUsuarios.php",
+    "dashboardReportes" => "view/dashboardReportes.php",
     "logout"    => "logout",
 ];
 
@@ -27,14 +28,14 @@ if (array_key_exists($page, $routes)) {
     }
 
     // Proteger rutas privadas
-    $rutasProtegidas = ["dashboard","home", "usuarios", "reporteUsuarios"];
+    $rutasProtegidas = ["dashboard","home", "usuarios", "reporteUsuarios", "dashboardReportes"];
     if (in_array($page, $rutasProtegidas) && !isset($_SESSION['usuario'])) {
         header("Location: index.php?page=login");
         exit;
     }
      if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] !== "Administrador") {
         // páginas restringidas solo para admin
-        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios"];
+        $soloAdmin = ["usuarios", "dashboard", "reporteUsuarios", "dashboardReportes"];
 
         if (in_array($page, $soloAdmin)) {
             // puedes redirigir al home o mostrar mensaje
