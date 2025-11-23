@@ -57,7 +57,6 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
                     </a>
                     <ul class="dropdown-menu animated-dropdown" aria-labelledby="mnenu4">
                         <li><a class="dropdown-item" href="index.php?page=raza">Raza</a></li>
-                        <li><a class="dropdown-item" href="#">Clase</a></li>
                     </ul>
                 </li>
             </ul>
