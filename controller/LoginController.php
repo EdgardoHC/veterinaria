@@ -2,31 +2,71 @@
 session_start();
 require_once "../model/UsuarioDAO.php";
 
+header("Content-Type: application/json; charset=utf-8");
+
 $dao = new UsuarioDAO();
 
-// Manejo de login
-if (isset($_POST['accion']) && $_POST['accion'] === "login") {
-    $usuario = $_POST['usuario'];
-    $pwd = $_POST['pwd'];
+if (!isset($_POST['accion'])) {
+    echo json_encode(["ok" => false, "msg" => "Acción no especificada"]);
+    exit;
+}
 
-    $row = $dao->buscarPorEmailOApodo($usuario);
+$accion = $_POST['accion'];
 
-    if ($row && password_verify($pwd, $row['pwd'])) {
+if ($accion === "login") {
+
+    $usuario = $_POST['usuario'] ?? "";
+    $pwd     = $_POST['pwd'] ?? "";
+
+    if ($usuario === "" || $pwd === "") {
+        echo json_encode(["ok" => false, "msg" => "Usuario y contraseña son obligatorios"]);
+        exit;
+    }
+
+    $row = $dao->buscarPorEmailONombreUsuario($usuario);
+
+    if (!$row || $row['estado'] != 1) {
+        echo json_encode(["ok" => false, "msg" => "Usuario o contraseña incorrectos"]);
+        exit;
+    }
+
+    $loginExitoso = false;
+
+    if (password_verify($pwd, $row['contrasena'])) {
+        $loginExitoso = true;
+    } 
+    else if ($pwd === $row['contrasena']) {
+        $loginExitoso = true;
+        
+        try {
+            $dao->actualizarContrasena($row['idusuario'], $pwd);
+        } catch (Exception $e) {
+  
+            error_log("Error al migrar hash de usuario: " . $row['idusuario']);
+        }
+    }
+
+    if ($loginExitoso) {
+
         $_SESSION['usuario'] = [
-            "id" => $row['idUsuario'],
-            "nombre" => $row['nombre'],
-            "apellidos" => $row['apellidos'],
-            "email" => $row['email'],
-            "apodo" => $row['apodo']
+            "id"         => $row['idusuario'],
+            "nombre"     => $row['nombrecompleto'],
+            "usuario"    => $row['nombreusuario'],
+            "email"      => $row['correoelectronico'],
+            "rol_nombre" => $row['nombre_rol']
         ];
 
         echo json_encode(["ok" => true]);
     } else {
         echo json_encode(["ok" => false, "msg" => "Usuario o contraseña incorrectos"]);
     }
+    exit;
 }
 
-if (isset($_POST['accion']) && $_POST['accion'] === "logout") {
+if ($accion === "logout") {
     session_destroy();
     echo json_encode(["ok" => true]);
+    exit;
 }
+
+echo json_encode(["ok" => false, "msg" => "Acción no válida"]);

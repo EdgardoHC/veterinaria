@@ -3,11 +3,14 @@ class Conexion {
     private static $instance = null;
     private $conn;
 
-    private function __construct() {
-        $host = 'localhost';
-        $user = 'root'; 
-        $password = 'itca123';
-        $db = 'veterinaria';
+    private function __construct()
+    {
+        $host = "localhost";
+        $db = "veterinaria";
+        $user = "root";
+        $pass = "";
+
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
             $this->conn = new mysqli($host, $user, $password, $db);
