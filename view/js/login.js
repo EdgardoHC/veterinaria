@@ -5,7 +5,7 @@ $(document).ready(function () {
             $(this).serialize() + "&accion=login",
             function (res) {
                 if (res.ok) {
-                   window.location.href = "index.php?page=dashboard";
+                   window.location.href = "index.php?page=home";
                 } else {
                     $("#msg").text(res.msg).css("color", "red");
                 }
