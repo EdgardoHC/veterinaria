@@ -1,6 +1,5 @@
 <?php
-class Conexion
-{
+class Conexion {
     private static $instance = null;
     private $conn;
 
@@ -14,24 +13,22 @@ class Conexion
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
-            $this->conn = new mysqli($host, $user, $pass, $db);
+            $this->conn = new mysqli($host, $user, $password, $db);
             $this->conn->set_charset("utf8mb4");
-        } catch (mysqli_sql_exception $e) {
-            error_log("Error de conexion a la base de datos: " . $e->getMessage());
-            throw $e;
+        } catch (Exception $e) {
+            die("Error de conexión DB: " . $e->getMessage());
         }
     }
 
-    public static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new self();
+    public static function getInstance() {
+        if (!self::$instance) {
+            self::$instance = new Conexion();
         }
         return self::$instance;
     }
 
-    public function getConexion()
-    {
+    public function getConexion() {
         return $this->conn;
     }
 }
+?>

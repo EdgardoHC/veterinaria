@@ -13,13 +13,90 @@ $routes = [
     "logout"    => "logout",
 ];
 
-// Pagina pedida
-$page = $_GET['page'] ?? "login";
+$page   = $_GET['page'] ?? "login";
+$action = $_GET['action'] ?? "";
 
-// Verificamos si existe la ruta
+//    MANEJO DE ACCIONES
+if (!empty($action)) {
+
+    switch ($action) {
+
+        case 'ingresar-consulta':
+            $controller = new ConsultaController();
+            $controller->mostrarIngresoConsulta();
+            exit;
+
+        case 'buscarExpediente':
+            $controller = new ConsultaController();
+            $controller->buscarExpediente();
+            exit;
+
+        case 'guardarConsulta':
+            $controller = new ConsultaController();
+            $controller->guardarConsulta();
+            exit;
+
+        case 'agregarReceta':
+            $controller = new ConsultaController();
+            $controller->agregarReceta();
+            exit;
+
+        case 'obtenerHistorial':
+            $controller = new ConsultaController();
+            $controller->obtenerHistorial();
+            exit;
+
+        case 'obtenerRecetas':
+            $controller = new ConsultaController();
+            $controller->obtenerRecetas();
+            exit;
+
+        case 'expediente-create':
+            $controller = new ExpedienteController();
+            $controller->create();
+            exit;
+
+        case 'expediente-store':
+            $controller = new ExpedienteController();
+            $controller->store();
+            exit;
+
+        case 'expediente':
+            $controller = new ExpedienteController();
+            exit;
+
+        case 'mascota-listar-json':
+            require_once 'controller/MascotaController.php';
+            $c = new MascotaController();
+            $c->listarJson();
+            exit;
+
+        case 'veterinario-listar-json':
+            require_once 'controller/VeterinarioController.php';
+            $c = new VeterinarioController();
+            $c->listarJson();
+            exit;
+
+        case 'listarMascotas':
+            require_once 'controller/MascotaController.php';
+            $c = new MascotaController();
+            $c->listarJson();
+            exit;
+
+        case 'listarVeterinarios':
+            require_once 'controller/VeterinarioController.php';
+            $c = new VeterinarioController();
+            $c->listarJson();
+            exit;
+
+        default:
+            break;
+    }
+}
+
+// MANEJO DE PÁGINAS 
 if (array_key_exists($page, $routes)) {
 
-    // Si es logout
     if ($page === "logout") {
         session_destroy();
         header("Location: index.php?page=login");
