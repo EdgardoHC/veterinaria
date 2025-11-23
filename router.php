@@ -22,46 +22,55 @@ if (!empty($action)) {
     switch ($action) {
 
         case 'ingresar-consulta':
+            require_once 'controller/ConsultaController.php';
             $controller = new ConsultaController();
             $controller->mostrarIngresoConsulta();
             exit;
 
         case 'buscarExpediente':
+            require_once 'controller/ConsultaController.php';
             $controller = new ConsultaController();
             $controller->buscarExpediente();
             exit;
 
         case 'guardarConsulta':
+            require_once 'controller/ConsultaController.php';
             $controller = new ConsultaController();
             $controller->guardarConsulta();
             exit;
 
         case 'agregarReceta':
+            require_once 'controller/ConsultaController.php';
             $controller = new ConsultaController();
             $controller->agregarReceta();
             exit;
 
         case 'obtenerHistorial':
+            require_once 'controller/ConsultaController.php';
             $controller = new ConsultaController();
             $controller->obtenerHistorial();
             exit;
 
         case 'obtenerRecetas':
+            require_once 'controller/ConsultaController.php';
             $controller = new ConsultaController();
             $controller->obtenerRecetas();
             exit;
 
         case 'expediente-create':
+            require_once 'controller/ExpedienteController.php';
             $controller = new ExpedienteController();
             $controller->create();
             exit;
 
         case 'expediente-store':
+            require_once 'controller/ExpedienteController.php';
             $controller = new ExpedienteController();
             $controller->store();
             exit;
 
         case 'expediente':
+            require_once 'controller/ExpedienteController.php';
             $controller = new ExpedienteController();
             exit;
 

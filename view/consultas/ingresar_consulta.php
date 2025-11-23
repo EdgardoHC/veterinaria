@@ -10,7 +10,6 @@
         .card-header { font-weight: bold; }
         .required:after { content: " *"; color: red; }
         .historial-item { border-left: 4px solid #007bff; padding-left: 15px; margin-bottom: 15px; background-color: #f8f9fa; padding: 10px; border-radius: 0 5px 5px 0; }
-        .modal-header .btn-close { margin: -0.5rem -0.5rem -0.5rem auto; }
     </style>
 </head>
 <body>
@@ -80,9 +79,6 @@
                     <div class="card-body">
                         <form id="formConsulta">
                             <input type="hidden" id="idexpediente" name="idexpediente">
-                            <!-- Id de usuario quemado, cambiar al momento de usarlo con session -->
-                            <input type="hidden" id="idusuario" name="idusuario" value="1"> 
-                            
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
@@ -131,9 +127,9 @@
 
         <div class="row mb-5">
             <div class="col-12 d-flex justify-content-between">
-                <button type="button" class="btn btn-secondary" onclick="location.reload()">
-                    <i class="fas fa-arrow-left"></i> Cancelar / Nuevo
-                </button>
+                <a href="index.php?page=home" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver al Inicio
+                </a>
                 <button type="button" class="btn btn-lg btn-success" id="btnGuardar" onclick="guardarConsulta()" style="display: none;">
                     <i class="fas fa-save"></i> Guardar Consulta
                 </button>
@@ -156,12 +152,16 @@
             });
         });
 
+        const URL_BUSCAR    = 'index.php?action=buscarExpediente';
+        const URL_HISTORIAL = 'index.php?action=obtenerHistorial';
+        const URL_GUARDAR   = 'index.php?action=guardarConsulta';
+
         function buscarExpediente() {
             const busqueda = $('#busqueda').val().trim();
             if (!busqueda) return alert('Escribe algo para buscar');
 
             $.ajax({
-                url: '../../controller/ConsultaController.php?action=buscar',
+                url: URL_BUSCAR, 
                 type: 'POST',
                 data: { busqueda: busqueda },
                 dataType: 'json',
@@ -176,7 +176,7 @@
                 },
                 error: function(e) {
                     console.error(e);
-                    alert("Error de conexión con el servidor");
+                    alert("Error. Revisa la consola.");
                 }
             });
         }
@@ -195,13 +195,13 @@
 
         function cargarHistorial(idExpediente) {
             $.ajax({
-                url: '../../controller/ConsultaController.php?action=historial',
+                url: URL_HISTORIAL, 
                 type: 'POST',
                 data: { idexpediente: idExpediente },
                 dataType: 'json',
                 success: function(res) {
                     let html = '';
-                    if (res.length > 0) {
+                    if (res && res.length > 0) {
                         res.forEach(item => {
                             html += `
                                 <div class="historial-item">
@@ -218,12 +218,14 @@
                         html = '<p class="text-muted text-center">Esta mascota no tiene consultas previas.</p>';
                     }
                     $('#listaHistorial').html(html);
+                },
+                error: function() {
+                     $('#listaHistorial').html('<p class="text-danger">Error al cargar historial.</p>');
                 }
             });
         }
 
         function guardarConsulta() {
-            // Validar manual
             if(!$('#peso').val() || !$('#diagnostico').val()) {
                 return alert("Llena al menos Peso y Diagnóstico");
             }
@@ -231,7 +233,7 @@
             const formData = new FormData(document.getElementById('formConsulta'));
 
             $.ajax({
-                url: '../../controller/ConsultaController.php?action=guardar',
+                url: URL_GUARDAR,
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -242,11 +244,12 @@
                         alert("¡Consulta Guardada con Éxito!");
                         location.reload();
                     } else {
-                        alert("Error al guardar: " + res.message);
+                        alert("Error al guardar: " + (res.message || 'Desconocido'));
                     }
                 },
-                error: function() {
-                    alert("Error fatal al guardar");
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                    alert("Error fatal al guardar.");
                 }
             });
         }

@@ -1,33 +1,57 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../model/ExpedienteDAO.php';
 
-header('Content-Type: application/json');
+class ConsultaController {
+    
+    private $dao;
 
-$action = $_GET['action'] ?? '';
+    public function __construct() {
+        $this->dao = new ExpedienteDAO();
+    }
 
-// Crear instancia del DAO
-$dao = new ExpedienteDAO();
+    public function mostrarIngresoConsulta() {
+        if (!isset($_SESSION['usuario'])) {
+            header("Location: index.php?page=login");
+            exit;
+        }
+        require_once __DIR__ . '/../view/consultas/ingresar_consulta.php';
+    }
 
-// Manejo de diferentes acciones relacionadas con consultas
-switch ($action) {
-    case 'buscar':
+    public function buscarExpediente() {
+        header('Content-Type: application/json');
+        
         $busqueda = $_POST['busqueda'] ?? '';
         if (!$busqueda) {
             echo json_encode(['success' => false, 'message' => 'Campo vacío']);
             exit;
         }
         
-        $resultado = $dao->buscarExpediente($busqueda);
+        $resultado = $this->dao->buscarExpediente($busqueda);
         echo json_encode($resultado);
-        break;
+    }
 
-    case 'historial':
+
+    public function obtenerHistorial() {
+        header('Content-Type: application/json');
+
         $idExpediente = $_POST['idexpediente'] ?? 0;
-        $historial = $dao->obtenerHistorialMascota($idExpediente); 
+        $historial = $this->dao->obtenerHistorialMascota($idExpediente); 
         echo json_encode($historial);
-        break;
+    }
 
-    case 'guardar':
+    public function guardarConsulta() {
+        header('Content-Type: application/json');
+
+        // Seguridad: Validar sesión
+        if (!isset($_SESSION['usuario']) || empty($_SESSION['usuario']['id'])) {
+            echo json_encode(['success' => false, 'message' => 'Sesión expirada. Recarga la página.']);
+            exit;
+        }
+
         $datos = [
             'idexpediente' => $_POST['idexpediente'],
             'fecha'        => $_POST['fecha'],
@@ -35,15 +59,15 @@ switch ($action) {
             'altura'       => $_POST['altura'],
             'resumen'      => $_POST['resumen'],
             'diagnostico'  => $_POST['diagnostico'],
-            'idusuario'    => $_POST['idusuario'] ?? 1 
+            // ID tomado de la sesión
+            'idusuario'    => $_SESSION['usuario']['id']
         ];
 
-        $res = $dao->guardarConsulta($datos);
+        $res = $this->dao->guardarConsulta($datos);
         echo json_encode($res);
-        break;
-
-    default:
-        echo json_encode(['success' => false, 'message' => 'Acción no válida']);
-        break;
+    }
+    
+    public function agregarReceta() { /* Lógica futura */ }
+    public function obtenerRecetas() { /* Lógica futura */ }
 }
 ?>

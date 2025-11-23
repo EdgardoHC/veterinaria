@@ -9,9 +9,24 @@ class ExpedienteDAO {
         $conexion = Conexion::getInstance();
         $this->conn = $conexion->getConexion();  
     }
-    
+
+    public function createExpediente($idMascota, $fecha, $descripcion, $idVeterinario) {
+        $sql = "INSERT INTO expediente (idmascota, fecha, descripcion, idusuario) VALUES (?, ?, ?, ?)";
+        
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . $this->conn->error);
+        }
+        $stmt->bind_param("issi", $idMascota, $fecha, $descripcion, $idVeterinario);
+        
+        if ($stmt->execute()) {
+            return $stmt->insert_id;
+        } else {
+            throw new Exception("Error al ejecutar la inserción: " . $stmt->error);
+        }
+    }
+
     public function buscarExpediente($busqueda) {
-        // Si es número, buscamos por ID Expediente, si no, por Nombre Mascota
         if (is_numeric($busqueda)) {
             $sql = "SELECT e.idexpediente, e.idmascota, 
                            m.nombres as nombre_mascota, m.sexo, m.color,
@@ -51,7 +66,6 @@ class ExpedienteDAO {
         }
     }
 
-    // 2. GUARDAR CONSULTA (Detalle)
     public function guardarConsulta($datos) {
         $sql = "INSERT INTO expedientedetalle (idexpediente, fecha, peso, altura, resumen, diagnostico, idusuario) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -76,9 +90,7 @@ class ExpedienteDAO {
         }
     }
 
-    // 3. OBTENER HISTORIAL
     public function obtenerHistorialMascota($idExpediente) {
-        // Traemos las últimas consultas de este expediente
         $sql = "SELECT d.fecha, d.peso, d.altura, d.diagnostico, u.nombrecompleto as veterinario
                 FROM expedientedetalle d
                 LEFT JOIN usuarios u ON d.idusuario = u.idusuario
@@ -92,22 +104,5 @@ class ExpedienteDAO {
         
         return $res->fetch_all(MYSQLI_ASSOC);
     }
-public function createExpediente($idMascota, $fecha, $descripcion, $idVeterinario) {
-        $sql = "INSERT INTO expediente (idmascota, fecha, descripcion, idusuario) VALUES (?, ?, ?, ?)";
-        
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            throw new Exception("Error prepare: " . $this->conn->error);
-        }
-
-        $stmt->bind_param("issi", $idMascota, $fecha, $descripcion, $idVeterinario);
-        
-        if ($stmt->execute()) {
-            return $stmt->insert_id;
-        } else {
-            throw new Exception("Error execute: " . $stmt->error);
-        }
-    }
-
 }
 ?>

@@ -8,12 +8,12 @@ class Conexion {
         $host = "localhost";
         $db = "veterinaria";
         $user = "root";
-        $pass = "";
+        $pass = "itca123";
 
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
-            $this->conn = new mysqli($host, $user, $password, $db);
+            $this->conn = new mysqli($host, $user, $pass, $db);
             $this->conn->set_charset("utf8mb4");
         } catch (Exception $e) {
             die("Error de conexión DB: " . $e->getMessage());

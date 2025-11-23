@@ -70,6 +70,33 @@ $usuario = $_SESSION['usuario'];
                     </div>
                 </div>
             </div>
+            <!-- Tarjeta 2: Ingresar Expediente -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="card-icon mb-3">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <h5 class="card-title">Nuevo Expediente</h5>
+                        <p class="card-text">Inicia un nuevo historial clínico o consulta médica para una mascota.</p>
+                        <a href="index.php?action=expediente-create" class="btn btn-primary">Crear Expediente</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Tarjeta 2: Ingresar Consulta -->
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body">
+                        <div class="card-icon mb-3">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <h5 class="card-title">Nueva Consulta</h5>
+                        <p class="card-text">Registrar signos vitales, diagnóstico y tratamiento a una mascota.</p>
+                        <a href="index.php?action=ingresar-consulta" class="btn btn-primary">Ingresar Consulta</a>
+                    </div>
+                </div>
+            </div>
+
              <?php if (isset($_SESSION['usuario']) && $_SESSION['usuario']["rol_nombre"] === "Administrador") { ?>
             <!-- Tarjeta 2: Gestión de Usuarios -->
             <div class="col-12 col-md-6 col-lg-4 mb-4">
