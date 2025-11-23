@@ -48,7 +48,6 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home';
                     <ul class="dropdown-menu animated-dropdown" aria-labelledby="menu3">
                         <li><a class="dropdown-item" href="index.php?page=padecimientos">Padecimientos</a></li>
                         <li><a class="dropdown-item" href="index.php?page=vacunas">Vacunación</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=tipoControlMedico">Tipo control médico</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
